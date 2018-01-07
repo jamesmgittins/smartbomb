@@ -1,0 +1,141 @@
+body {
+  font-family: -apple-system,".SFNSText-Regular",BlinkMacSystemFont,"San Francisco","Roboto","Segoe UI","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","Helvetica","Lucida Grande",sans-serif;
+  background-color: #000;
+  color: #DDD;
+  font-size: 30px;
+  margin:0;
+}
+
+a, a:visited, a:hover {
+  color:#BBE;
+}
+
+input[type="text"] {
+    font-size:25px
+}
+
+#enter-code {
+  text-align: center;
+  margin: auto;
+  width: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#shows {
+  width:17%;
+  /*display: inline-block;*/
+  float:left;
+}
+
+#shows .show {
+  padding: 0 10px 0 10px;
+}
+
+#shows .show a {
+  text-decoration: none;
+  line-height: 50px;
+}
+
+#shows .show a:hover {
+  text-decoration: underline;
+}
+
+#shows .show.selected {
+  background-color: #334;
+}
+
+#videos {
+  width:82%;
+  /*display: inline-block;*/
+  float:left;
+}
+
+#videos .video {
+  width: 500px;
+  height: 281px;
+  margin:5px;
+  text-align: center;
+  display: inline-block;
+  float:left;
+  background-size: contain;
+  position: relative;
+}
+
+#videos .video a {
+  color:#fff;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 5px;
+  width: 75%;
+  line-height: 49px;
+  position: absolute;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+#videos .video .video-time {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-size: 18px;
+  padding:5px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#videos .video .live {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 24px;
+  padding:5px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#videos .video .video-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height : 10px;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#videos .video .video-timer-marker {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height : 10px;
+  background-color: #F00;
+}
+
+#video-container {
+  border: 5px solid #000;
+  border-radius: 5px;
+  padding:40px 50px 50px 50px;
+  background-color: rgba(0, 0, 0, 0.9);
+  width:70%;
+  position: fixed;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  text-align: right;
+}
+#video-title {
+  margin-right: 15px;
+}
+
+#video-player {
+  margin-top:10px;
+  width:100%;
+}
+
+a.btn {
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  text-decoration: none;
+}

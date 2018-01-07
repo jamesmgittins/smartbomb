@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Smartbomb</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+  </head>
+  <body>
+
+    <div id="enter-code">
+      <p>Please go to <a href="https://www.giantbomb.com/app/smartbomb" target="_blank">www.giantbomb.com/app/smartbomb</a> and enter the app code given below</p>
+      <input type="text" id="app-code"/>
+      <a class="btn" onclick="registerApp();" href="#">Register</a>
+      <p id="reg-status"></p>
+    </div>
+
+    <div id="shows" style="display:none;">
+    </div>
+
+    <div id="videos" style="display:none;">
+    </div>
+
+    <div id="video-container" style="display:none;">
+      <span id="video-title"></span>
+      <a class="btn" onclick="closeVideo();" href="#">Close</a>
+      <video id="video-player" controls autoplay></video>
+    </div>
+
+  </body>
+</html>
