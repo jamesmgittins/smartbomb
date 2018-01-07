@@ -33,7 +33,8 @@ function requestFullScreen(element) {
 var Constants = {
   appName:"smartbomb",
   storedTokenName:"smartBombRegToken",
-  cacheTime: 60000
+  cacheTime: 60000,
+  videoFields:"&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time"
 };
 
 var regToken;
@@ -67,7 +68,7 @@ var corsRequest = function(url, callback) {
 };
 
 function getVideoById(id, callback) {
-  corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=id:" + id, function(data){
+  corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=id:" + id + Constants.videoFields, function(data){
     if (data.error == "OK") {
       videoIdCache[data.results[0].id] = data.results[0];
       callback(data.results[0]);
@@ -78,7 +79,7 @@ function getVideoById(id, callback) {
 }
 
 function getNextContinueVideo(counter, after) {
-  console.log("getNextContinueVideo");
+  // console.log("getNextContinueVideo");
   stopLoadingContinueVideos = false;
   if (videoIdCache[savedTimes[counter].videoId]) {
     videos.push(videoIdCache[savedTimes[counter].videoId]);
@@ -118,12 +119,12 @@ function getVideosToContinue(callback) {
 }
 
 function getAllVideos(callback) {
-  console.log("getAllVideos");
+  // console.log("getAllVideos");
   if (videoShowCache["all"] && Date.now() - videoShowCache["all"].time < Constants.cacheTime) {
     videos = videoShowCache["all"].videos;
     callback();
   } else {
-    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken, function(data){
+    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + Constants.videoFields, function(data){
       if (data.error == "OK") {
         videos = data.results;
         videoShowCache["all"] = {videos:videos, time:Date.now()};
@@ -136,12 +137,12 @@ function getAllVideos(callback) {
 }
 
 function getVideosForShow(show, callback) {
-  console.log("getVideosForShow - " + show);
+  // console.log("getVideosForShow - " + show);
   if (videoShowCache[show] && Date.now() - videoShowCache[show].time < Constants.cacheTime) {
     videos = videoShowCache[show].videos;
     callback();
   } else {
-    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=video_show:" + show, function(data){
+    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=video_show:" + show + Constants.videoFields, function(data){
       if (data.error == "OK") {
         videos = data.results;
         videoShowCache[show] = {videos:videos, time:Date.now()};
@@ -208,11 +209,11 @@ function renderShows() {
 }
 
 function renderShow(id, name) {
-  return "<div class='show' id='show-" + id + "'><a href='#'>" + name + "</a></div>";
+  return "<div class='show' id='show-" + id + "'><a href='javascript:void(0)'>" + name + "</a></div>";
 }
 
 function selectShow(show) {
-  console.log("selectShow - " + show);
+  // console.log("selectShow - " + show);
   stopLoadingContinueVideos = true;
   if (currentShow != show) {
     currentShow = show;
@@ -251,7 +252,7 @@ function renderVideo(video, live) {
     savedTimer = "<div class='video-timer'><span class='video-timer-marker' style='width:" + width + "%;'></span></div>";
   }
   var time = "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
-  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><a href='#'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
+  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
 }
 
 function getVideos() {
@@ -272,21 +273,6 @@ function getVideos() {
 
 function playVideo(video) {
   currentVideo = video;
-  // var vid = document.getElementById("video-player");
-  //
-  // if (!videoSource) {
-  //   videoSource = document.createElement('source');
-  //   vid.appendChild(videoSource);
-  // }
-  //
-  // var videoUrl = video.hd_url || video.high_url || video.low_url;
-  //
-  // videoSource.setAttribute('src', videoUrl + "?api_key=" + regToken);
-  // vid.load();
-  // if (video.saved_time)
-  //   vid.currentTime = video.saved_time;
-  // vid.play();
-
   var vid = videojs("video-player", null);
   var videoUrl = video.hd_url || video.high_url || video.low_url;
   if (video.id == "live") {
@@ -313,14 +299,14 @@ function closeVideo() {
   $("#video-container").hide();
 
   corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime(), function(data){
-    console.log(data);
+    // console.log(data);
   });
 }
 
 function registerApp() {
   var linkCode = $("#app-code").val();
   $.getJSON('https://cors.io/?https://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode,function(result){
-    console.log(result);
+    // console.log(result);
     if (result.status == "success") {
       regToken = result.regToken;
       localStorage.setItem(Constants.storedTokenName, regToken);
