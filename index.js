@@ -271,14 +271,26 @@ function getVideos() {
   }
 }
 
+function testHLS() {
+  var video = {
+    id : "live",
+    stream:"https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+    name : "Test Stream"
+  };
+  playVideo(video);
+}
+
 function playVideo(video) {
   currentVideo = video;
   var vid = videojs("video-player", null);
-  var videoUrl = video.hd_url || video.high_url || video.low_url;
+
   if (video.id == "live") {
-    videoUrl = video.stream;
+    vid.src({src:video.stream + "?api_key=" + regToken, type:"application/x-mpegURL"});
+  } else {
+    var videoUrl = video.hd_url || video.high_url || video.low_url;
+    vid.src({src:videoUrl + "?api_key=" + regToken, type:"video/mp4"});
   }
-  vid.src(videoUrl + "?api_key=" + regToken);
+
   vid.ready(function() {
     if (video.saved_time && video.id != "live")
       vid.currentTime(video.saved_time);
@@ -298,9 +310,11 @@ function closeVideo() {
 
   $("#video-container").hide();
 
-  corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime(), function(data){
-    // console.log(data);
-  });
+  if (currentVideo.id != "live") {
+    corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime(), function(data){
+      // console.log(data);
+    });
+  }
 }
 
 function registerApp() {

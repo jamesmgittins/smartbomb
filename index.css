@@ -143,3 +143,7 @@ a.btn {
 .video-js {
   font-size: 25px;
 }
+
+.vjs-default-skin.vjs-paused .vjs-big-play-button {
+  display: none;
+}
