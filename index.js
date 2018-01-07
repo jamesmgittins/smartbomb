@@ -103,11 +103,8 @@ function getNextContinueVideo(counter, after) {
 
 function getVideosToContinue(callback) {
   if (savedTimes.length > 0) {
-    // var videoIds = savedTimes[0].videoId;
-
     var counter = 0;
     videos = [];
-
     getNextContinueVideo(counter, function(){
 
     });
@@ -172,9 +169,11 @@ function getAllSavedTimes(callback) {
 
 function getLiveStream(callback) {
   corsRequest("https://www.giantbomb.com/api/video/current-live/?api_key=" + regToken, function(data){
-    if (data.success)
+    if (data.success && data.video) {
       liveVideo = data.video;
-
+      liveVideo.id = "live";
+      liveVideo.name = data.video.title;
+    }
     callback();
   });
 }
@@ -267,31 +266,47 @@ function getVideos() {
 
 function playVideo(video) {
   currentVideo = video;
-  var vid = document.getElementById("video-player");
+  // var vid = document.getElementById("video-player");
+  //
+  // if (!videoSource) {
+  //   videoSource = document.createElement('source');
+  //   vid.appendChild(videoSource);
+  // }
+  //
+  // var videoUrl = video.hd_url || video.high_url || video.low_url;
+  //
+  // videoSource.setAttribute('src', videoUrl + "?api_key=" + regToken);
+  // vid.load();
+  // if (video.saved_time)
+  //   vid.currentTime = video.saved_time;
+  // vid.play();
 
-  if (!videoSource) {
-    videoSource = document.createElement('source');
-    vid.appendChild(videoSource);
-  }
-
+  var vid = videojs("video-player", null);
   var videoUrl = video.hd_url || video.high_url || video.low_url;
+  if (video.id == "live") {
+    videoUrl = video.stream;
+  }
+  vid.src(videoUrl + "?api_key=" + regToken);
+  vid.ready(function() {
+    if (video.saved_time && video.id != "live")
+      vid.currentTime(video.saved_time);
 
-  videoSource.setAttribute('src', videoUrl + "?api_key=" + regToken);
-  vid.load();
-  if (video.saved_time)
-    vid.currentTime = video.saved_time;
-  vid.play();
-  $("#video-container").show();
-  $("#video-title").text(currentVideo.name);
-  requestFullScreen(vid);
+    $("#video-container").show();
+    $("#video-title").text(currentVideo.name);
+    vid.requestFullScreen();
+  })
+
 }
 
 function closeVideo() {
-  var vid = document.getElementById("video-player");
+  // var vid = document.getElementById("video-player");
+  // vid.pause();
+  var vid = videojs("video-player", null);
   vid.pause();
+
   $("#video-container").hide();
 
-  corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime, function(data){
+  corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime(), function(data){
     console.log(data);
   });
 }
@@ -315,7 +330,7 @@ function registerApp() {
 $(function() {
   regToken = localStorage.getItem(Constants.storedTokenName);
   if (regToken) {
-    $("#enter-code").fadeOut();
+    $("#enter-code").hide();
     renderShows();
   }
 });

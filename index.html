@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Smartbomb</title>
+    <link href="https://vjs.zencdn.net/6.6.0/video-js.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="index.js"></script>
@@ -24,8 +25,10 @@
     <div id="video-container" style="display:none;">
       <span id="video-title"></span>
       <a class="btn" onclick="closeVideo();" href="#">Close</a>
-      <video id="video-player" controls autoplay></video>
+      <video id="video-player" class="video-js vjs-default-skin" controls autoplay></video>
     </div>
 
+    <script src="https://vjs.zencdn.net/6.6.0/video.js"></script>
+    <script src="videojs-contrib-hls.min.js"></script>
   </body>
 </html>
