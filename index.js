@@ -299,7 +299,7 @@ function playVideo(video) {
 
     $("#video-container").show();
     $("#video-title").text(currentVideo.name);
-    vid.requestFullScreen();
+    vid.requestFullscreen();
   })
 
 }
