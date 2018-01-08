@@ -303,7 +303,7 @@ function closeVideo() {
 function registerApp() {
   $(".spinner").show();
   var linkCode = $("#app-code").val();
-  $.getJSON('http://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode,function(result){
+  $.getJSON('https://cors.jamesgittins.com/https://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode,function(result){
     $(".spinner").hide();
     if (result.status == "success") {
       regToken = result.regToken;
