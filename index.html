@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Smartbomb</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link href="https://vjs.zencdn.net/6.6.0/video-js.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -9,9 +11,9 @@
   </head>
   <body>
 
-    <div id="enter-code">
+    <div id="enter-code" style="display:none;">
       <p>Please go to <a href="https://www.giantbomb.com/app/smartbomb" target="_blank">www.giantbomb.com/app/smartbomb</a> and enter the app code given below</p>
-      <input type="text" id="app-code" onkeydown="upperCaseF(this)"/>
+      <input type="text" id="app-code" onkeydown="upperCaseF(this)" autocapitalize="characters"/>
       <a class="btn" onclick="registerApp();" href="javascript:void(0)">Register</a>
       <p id="reg-status"></p>
     </div>
@@ -26,6 +28,12 @@
       <span id="video-title"></span>
       <a class="btn" onclick="closeVideo();" href="javascript:void(0)">Close</a>
       <video id="video-player" class="video-js vjs-default-skin" controls autoplay></video>
+    </div>
+
+    <div class="spinner" style="display:none;">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
     </div>
 
     <script src="https://vjs.zencdn.net/6.6.0/video.js"></script>

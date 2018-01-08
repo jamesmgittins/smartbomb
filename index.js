@@ -16,20 +16,6 @@ function upperCaseF(a){
     }, 1);
 }
 
-function requestFullScreen(element) {
-    // Supports most browsers and their versions.
-    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
-
-    if (requestMethod) { // Native full screen.
-        requestMethod.call(element);
-    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-        if (wscript !== null) {
-            wscript.SendKeys("{F11}");
-        }
-    }
-}
-
 var Constants = {
   appName:"smartbomb",
   storedTokenName:"smartBombRegToken",
@@ -50,6 +36,7 @@ var stopLoadingContinueVideos = true;
 var videoSource;
 
 var corsRequest = function(url, callback) {
+  $(".spinner").show();
   $.ajax ({
     type: 'GET',
     dataType: 'jsonp',
@@ -63,7 +50,7 @@ var corsRequest = function(url, callback) {
   }).fail(function() {
     alert("error");
   }).always(function() {
-    // alert("complete");
+    $(".spinner").hide();
   });
 };
 
@@ -83,25 +70,21 @@ function getNextContinueVideo(counter, after) {
   stopLoadingContinueVideos = false;
   if (videoIdCache[savedTimes[counter].videoId]) {
     videos.push(videoIdCache[savedTimes[counter].videoId]);
+    videoIdCache[savedTimes[counter].videoId].save_time = savedTimes[counter].savedTime;
     renderVideos();
     counter++;
-    if (counter >= savedTimes.length)
-      after();
-    else {
+    if (counter < savedTimes.length)
       getNextContinueVideo(counter, after);
-    }
   } else {
     getVideoById(savedTimes[counter].videoId, function(videoResults) {
       videos.push(videoResults);
       renderVideos();
       counter++;
-      if (counter >= savedTimes.length)
-        after();
-      else {
+      if (counter < savedTimes.length) {
         setTimeout(function(){
           if (!stopLoadingContinueVideos)
             getNextContinueVideo(counter, after);
-        },1000);
+        }, 500);
       }
     });
   }
@@ -109,21 +92,25 @@ function getNextContinueVideo(counter, after) {
 }
 
 function getVideosToContinue(callback) {
-  if (savedTimes.length > 0) {
+  getAllSavedTimes(function(){
     var counter = 0;
     videos = [];
-    getNextContinueVideo(counter, function(){
+    getNextContinueVideo(counter);
+  });
+}
 
-    });
+function checkShowCache(show, request, callback) {
+  if (videoShowCache[show]) {
+    videos = videoShowCache[show].videos;
+    callback();
+  }
+  if (!videoShowCache[show] || Date.now() - videoShowCache[show].time > Constants.cacheTime) {
+    request();
   }
 }
 
 function getAllVideos(callback) {
-  // console.log("getAllVideos");
-  if (videoShowCache["all"] && Date.now() - videoShowCache["all"].time < Constants.cacheTime) {
-    videos = videoShowCache["all"].videos;
-    callback();
-  } else {
+  checkShowCache("all", function(){
     corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + Constants.videoFields, function(data){
       if (data.error == "OK") {
         videos = data.results;
@@ -133,15 +120,11 @@ function getAllVideos(callback) {
         // handle error
       }
     });
-  }
+  }, callback);
 }
 
 function getVideosForShow(show, callback) {
-  // console.log("getVideosForShow - " + show);
-  if (videoShowCache[show] && Date.now() - videoShowCache[show].time < Constants.cacheTime) {
-    videos = videoShowCache[show].videos;
-    callback();
-  } else {
+  checkShowCache(show, function(){
     corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=video_show:" + show + Constants.videoFields, function(data){
       if (data.error == "OK") {
         videos = data.results;
@@ -151,7 +134,7 @@ function getVideosForShow(show, callback) {
         // handle error
       }
     });
-  }
+  }, callback);
 }
 
 function getVideoShows(callback) {
@@ -187,23 +170,21 @@ function getLiveStream(callback) {
 
 function renderShows() {
   getLiveStream(function(){
-    getAllSavedTimes(function(){
-      getVideoShows(function() {
+    getVideoShows(function() {
 
-        var htmlString = renderShow("all", "Latest Videos");
-        htmlString += renderShow("continue", "Continue Watching");
+      var htmlString = renderShow("all", "Latest Videos");
+      htmlString += renderShow("continue", "Continue Watching");
 
-        videoShows.forEach(function(show){
-          htmlString += renderShow(show.id, show.title);
-        });
-        $("#shows").html(htmlString);
-        $("#shows").show();
-        $("#show-all").addClass("selected");
-        $("#shows .show").click(function(event){
-          selectShow($(this).attr("id").substring(5));
-        });
-        getVideos();
+      videoShows.forEach(function(show){
+        htmlString += renderShow(show.id, show.title);
       });
+      $("#shows").html(htmlString);
+      $("#shows").show();
+      $("#show-all").addClass("selected");
+      $("#shows .show").click(function(event){
+        selectShow($(this).attr("id").substring(5));
+      });
+      getVideos();
     });
   });
 }
@@ -251,7 +232,7 @@ function renderVideo(video, live) {
     var width = Math.min(Math.round(video.saved_time / video.length_seconds * 100),100);
     savedTimer = "<div class='video-timer'><span class='video-timer-marker' style='width:" + width + "%;'></span></div>";
   }
-  var time = "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
+  var time = live ? "" : "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
   return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
 }
 
@@ -292,13 +273,15 @@ function playVideo(video) {
   }
 
   vid.ready(function() {
-    if (video.saved_time && video.id != "live")
-      vid.currentTime(video.saved_time);
 
     $("#video-container").show();
     $("#video-title").text(currentVideo.name);
+
     vid.requestFullscreen();
-  })
+
+    if (video.saved_time && video.id != "live")
+      vid.currentTime(video.saved_time);
+  });
 
 }
 
@@ -312,15 +295,16 @@ function closeVideo() {
 
   if (currentVideo.id != "live") {
     corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + vid.currentTime(), function(data){
-      // console.log(data);
+      console.log(data);
     });
   }
 }
 
 function registerApp() {
+  $(".spinner").show();
   var linkCode = $("#app-code").val();
-  $.getJSON('https://cors.io/?https://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode,function(result){
-    // console.log(result);
+  $.getJSON('http://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode,function(result){
+    $(".spinner").hide();
     if (result.status == "success") {
       regToken = result.regToken;
       localStorage.setItem(Constants.storedTokenName, regToken);
@@ -338,5 +322,7 @@ $(function() {
   if (regToken) {
     $("#enter-code").hide();
     renderShows();
+  } else {
+    $("#enter-code").show();
   }
 });
