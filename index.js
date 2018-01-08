@@ -233,7 +233,7 @@ function renderVideo(video, live) {
     savedTimer = "<div class='video-timer'><span class='video-timer-marker' style='width:" + width + "%;'></span></div>";
   }
   var time = live ? "" : "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
-  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
+  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><span class='highlight'></span><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
 }
 
 function getVideos() {

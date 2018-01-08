@@ -44,6 +44,10 @@ input[type="text"] {
   text-decoration: underline;
 }
 
+#shows .show:hover {
+  background-color: #112;
+}
+
 #shows .show.selected {
   background-color: #334;
 }
@@ -64,6 +68,20 @@ input[type="text"] {
   background-size: contain;
   position: relative;
   cursor: pointer;
+}
+
+#videos .video .highlight {
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 0;
+}
+
+#videos .video:hover .highlight {
+  opacity: 0.2;
 }
 
 #videos .video a {
