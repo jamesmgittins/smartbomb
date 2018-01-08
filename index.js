@@ -190,7 +190,7 @@ function renderShows() {
     getAllSavedTimes(function(){
       getVideoShows(function() {
 
-        var htmlString = renderShow("all", "Most Recent");
+        var htmlString = renderShow("all", "Latest Videos");
         htmlString += renderShow("continue", "Continue Watching");
 
         videoShows.forEach(function(show){
