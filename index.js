@@ -20,16 +20,26 @@ var Constants = {
   appName:"smartbomb",
   storedTokenName:"smartBombRegToken",
   cacheTime: 60000,
-  videoFields:"&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time"
+  liveVideoCheckTime: 60000,
+  videoFields:"&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time",
+  videosLimit : "&limit=30",
+  videosPerRequest : 30
 };
+
 
 var regToken;
 var videoShows = [];
 var currentShow = "all";
 var currentVideo;
+
 var videos = [];
+var totalVideos = 100;
+var currentOffset = 0;
+var readyToLoadMore = true;
+
 var savedTimes = [];
 var liveVideo;
+var lastLiveCheck = 0;
 var videoIdCache = [];
 var videoShowCache = [];
 var stopLoadingContinueVideos = true;
@@ -65,7 +75,7 @@ var corsRequest = function(url, callback) {
 };
 
 function getVideoById(id, callback) {
-  corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=id:" + id + Constants.videoFields, function(data){
+  corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=id:" + id + Constants.videoFields + Constants.videosLimit, function(data){
     if (data.error == "OK") {
       videoIdCache[data.results[0].id] = data.results[0];
       callback(data.results[0]);
@@ -125,45 +135,40 @@ function getVideosToContinue(callback) {
   });
 }
 
-function checkShowCache(show, request, callback) {
-  if (videoShowCache[show]) {
+function checkShowCache(show, request, callback, offset) {
+  if (videoShowCache[show] && offset == 0) {
     videos = videoShowCache[show].videos;
     callback();
   }
-  if (!videoShowCache[show] || Date.now() - videoShowCache[show].time > Constants.cacheTime) {
+  if (!videoShowCache[show] || Date.now() - videoShowCache[show].time > Constants.cacheTime || offset > 0) {
     request();
     if (videoShowCache[show])
       $(".spinner").hide();
   }
 }
 
-function getAllVideos(callback) {
-  checkShowCache("all", function(){
-    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + Constants.videoFields, function(data){
-      if (data.error == "OK") {
-        videos = data.results;
-        videoShowCache["all"] = {videos:videos, time:Date.now()};
-        callback();
-      } else {
-        videoShowCache["all"] = undefined;
-      }
-    });
-  }, callback);
-}
-
-function getVideosForShow(show, callback) {
+function getVideosForShow(show, callback, offset) {
   checkShowCache(show, function(){
-    corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=video_show:" + show + Constants.videoFields, function(data){
+    corsRequest("https://www.giantbomb.com/api/videos/?offset=" + offset + "&api_key=" + regToken + (show == "all" ? "" : "&filter=video_show:" + show) + Constants.videoFields + Constants.videosLimit, function(data){
       if (data.error == "OK") {
-        videos = data.results;
-        videoShowCache[show] = {videos:videos, time:Date.now()};
+        if (offset > 0) {
+          videos = videos.concat(data.results);
+          totalVideos = data.number_of_total_results;
+          currentOffset = offset;
+        } else {
+          videos = data.results;
+          totalVideos = data.number_of_total_results;
+          currentOffset = 0;
+          videoShowCache[show] = {videos:videos, time:Date.now()};
+        }
         callback();
       } else {
         videoShowCache[show] = undefined;
       }
     });
-  }, callback);
+  }, callback, offset);
 }
+
 
 function getVideoShows(callback) {
   corsRequest("https://www.giantbomb.com/api/video_shows/?api_key=" + regToken + "&sort=latest:desc", function(data){
@@ -191,9 +196,14 @@ function getLiveStream(callback) {
       liveVideo = data.video;
       liveVideo.id = "live";
       liveVideo.name = data.video.title;
+    } else {
+      liveVideo = undefined;
     }
     callback();
   });
+  setTimeout(function(){
+    getLiveStream(renderVideos);
+  },Constants.liveVideoCheckTime);
 }
 
 function renderShows() {
@@ -250,11 +260,14 @@ function renderVideos() {
   $("#videos").show();
   $("#videos .video").click(function(){
     var id = $(this).attr("id").substring(6);
-    videos.forEach(function(video){
-      if (video.id == id) {
-        playVideo(video);
-      }
-    });
+    if (id == "live")
+      playVideo(liveVideo);
+    else
+      videos.forEach(function(video){
+        if (video.id == id) {
+          playVideo(video);
+        }
+      });
   });
 
 }
@@ -266,7 +279,8 @@ function renderVideo(video, live) {
     savedTimer = "<div class='video-timer'><span class='video-timer-marker' style='width:" + width + "%;'></span></div>";
   }
   var time = live ? "" : "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
-  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + video.image.medium_url + ");'><span class='highlight'></span><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
+  var image = live ? "https://" + video.image : video.image.medium_url;
+  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + image + ");'><span class='highlight'></span><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
 }
 
 function getVideos() {
@@ -274,14 +288,10 @@ function getVideos() {
     getVideosToContinue(function(){
       renderVideos();
     });
-  } else if (currentShow == "all") {
-    getAllVideos(function(){
-      renderVideos();
-    });
   } else {
     getVideosForShow(currentShow, function(){
       renderVideos();
-    });
+    }, 0);
   }
 }
 
@@ -417,5 +427,15 @@ $(function() {
         "fullscreenToggle"
       ]
     }
-  })
+  });
+  $(window).scroll(function(){
+    if (readyToLoadMore && currentShow != "continue" && videos.length > 0 && $("#videos").height() + $("#videos").offset().top < $(this).height() + $(this).scrollTop() + 500) {
+      console.log("loading more videos");
+      readyToLoadMore = false;
+      getVideosForShow(currentShow, function(){
+        renderVideos();
+        readyToLoadMore = true;
+      }, currentOffset + Constants.videosPerRequest);
+    }
+  });
 });
