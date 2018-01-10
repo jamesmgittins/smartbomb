@@ -1,21 +1,3 @@
-function toHHMMSS(value) {
-    var sec_num = parseInt(value, 10); // don't forget the second param
-    var hours   = Math.floor(sec_num / 3600);
-    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
-    return hours+':'+minutes+':'+seconds;
-}
-
-function upperCaseF(a){
-    setTimeout(function(){
-        a.value = a.value.toUpperCase();
-    }, 1);
-}
-
 var Constants = {
   appName:"smartbomb",
   storedTokenName:"smartBombRegToken",
@@ -26,6 +8,15 @@ var Constants = {
   videosPerRequest : 30
 };
 
+var videoCategories =[
+  {id:20,name:"Best Of"},
+  {id:7,name:"Trailers"},
+  {id:6,name:"Events"},
+  {id:11,name:"Extra Life"},
+  {id:8,name:"Features"}
+];
+
+var currentCategory = false;
 
 var regToken;
 var videoShows = [];
@@ -42,37 +33,14 @@ var liveVideo;
 var lastLiveCheck = 0;
 var videoIdCache = [];
 var videoShowCache = [];
+var videoCategoryCache = [];
 var stopLoadingContinueVideos = true;
 var videoSource;
 var timerInterval;
 var requestInProgress = false;
 var jsVideo;
 
-var corsRequest = function(url, callback) {
-  if (requestInProgress)
-    return false;
 
-  requestInProgress = true;
-  $(".spinner").show();
-  $.ajax ({
-    type: 'GET',
-    dataType: 'jsonp',
-    crossDomain: true,
-    jsonp: 'json_callback',
-    jsonpCallback: 'callback',
-    url: url + "&format=jsonp"
-  }).done(function(data) {
-      requestInProgress = false;
-      callback(data);
-  }).fail(function(response) {
-    requestInProgress = false;
-    console.log("Error getting request from - " + url);
-    console.log(response);
-  }).always(function() {
-    $(".spinner").hide();
-    requestInProgress = false;
-  });
-};
 
 function getVideoById(id, callback) {
   corsRequest("https://www.giantbomb.com/api/videos/?api_key=" + regToken + "&filter=id:" + id + Constants.videoFields + Constants.videosLimit, function(data){
@@ -135,21 +103,27 @@ function getVideosToContinue(callback) {
   });
 }
 
-function checkShowCache(show, request, callback, offset) {
-  if (videoShowCache[show] && offset == 0) {
-    videos = videoShowCache[show].videos;
+function checkShowCache(request, callback, offset) {
+
+  var cacheValue = currentShow ? videoShowCache[currentShow] : videoCategoryCache[currentCategory];
+
+  if (cacheValue && offset == 0) {
+    videos = currentShow ? videoShowCache[currentShow].videos : videoCategoryCache[currentCategory].videos;
     callback();
   }
-  if (!videoShowCache[show] || Date.now() - videoShowCache[show].time > Constants.cacheTime || offset > 0) {
+  if (!cacheValue || Date.now() - cacheValue.time > Constants.cacheTime || offset > 0) {
     request();
-    if (videoShowCache[show])
+    if (cacheValue)
       $(".spinner").hide();
   }
 }
 
-function getVideosForShow(show, callback, offset) {
-  checkShowCache(show, function(){
-    corsRequest("https://www.giantbomb.com/api/videos/?offset=" + offset + "&api_key=" + regToken + (show == "all" ? "" : "&filter=video_show:" + show) + Constants.videoFields + Constants.videosLimit, function(data){
+function getVideosForShow(callback, offset) {
+  checkShowCache(function(){
+    var showFilter = currentShow == "all" ? "" : "&filter=video_show:" + currentShow;
+    if (currentCategory)
+      showFilter = "&filter=video_categories:" + currentCategory;
+    corsRequest("https://www.giantbomb.com/api/videos/?offset=" + offset + "&api_key=" + regToken + showFilter + Constants.videoFields + Constants.videosLimit, function(data){
       if (data.error == "OK") {
         if (offset > 0) {
           videos = videos.concat(data.results);
@@ -159,11 +133,19 @@ function getVideosForShow(show, callback, offset) {
           videos = data.results;
           totalVideos = data.number_of_total_results;
           currentOffset = 0;
-          videoShowCache[show] = {videos:videos, time:Date.now()};
+          if (currentCategory) {
+            videoCategoryCache[currentCategory] = {videos:videos, time:Date.now()};
+          } else {
+            videoShowCache[currentShow] = {videos:videos, time:Date.now()};
+          }
         }
         callback();
       } else {
-        videoShowCache[show] = undefined;
+        if (currentCategory) {
+          videoCategoryCache[currentCategory] = undefined;
+        } else {
+          videoShowCache[currentShow] = undefined;
+        }
       }
     });
   }, callback, offset);
@@ -174,6 +156,17 @@ function getVideoShows(callback) {
   corsRequest("https://www.giantbomb.com/api/video_shows/?api_key=" + regToken + "&sort=latest:desc", function(data){
     if (data.error == "OK") {
       videoShows = data.results;
+      callback();
+    } else {
+      // handle error
+    }
+  });
+}
+
+function getVideoCategories(callback) {
+  corsRequest("https://www.giantbomb.com/api/video_categories/1/?api_key=" + regToken, function(data){
+    if (data.error == "OK") {
+      videoCategories = data.results;
       callback();
     } else {
       // handle error
@@ -213,37 +206,48 @@ function renderShows() {
       var htmlString = renderShow("all", "Latest Videos");
       htmlString += renderShow("continue", "Continue Watching");
 
+      videoCategories.forEach(function(show){
+        htmlString += renderShow(show.id, show.name, true);
+      });
+
       videoShows.forEach(function(show){
         htmlString += renderShow(show.id, show.title);
       });
       $("#shows").html(htmlString);
       $("#shows").show();
-      $("#show-all").addClass("selected");
+      $(".show[data-show-id='all']").addClass("selected");
       $("#shows .show").click(function(event){
-        selectShow($(this).attr("id").substring(5));
+        selectShow($(this).data("show-id"), $(this).hasClass("category"));
       });
       getVideos();
     });
   });
 }
 
-
-
-function renderShow(id, name) {
-  return "<div class='show' id='show-" + id + "'><a href='javascript:void(0)'>" + name + "</a></div>";
+function renderShow(id, name, isCategory) {
+  var classes = isCategory ? "show category" : "show";
+  return "<div class='" + classes +"' data-show-id='" + id + "'><a href='javascript:void(0)'>" + name + "</a></div>";
 }
 
-function selectShow(show) {
+function selectShow(show, isCategory) {
   if ($("#video-container").is(":visible"))
     return false;
 
   stopLoadingContinueVideos = true;
-  if (currentShow != show && !requestInProgress) {
-    currentShow = show;
+  if (((isCategory && currentCategory != show) || (!isCategory && currentShow != show)) && !requestInProgress) {
+    $("#shows .show").removeClass("selected");
+    if (isCategory) {
+      currentCategory = show;
+      currentShow = false;
+      $(".show.category[data-show-id='" + show + "']").addClass("selected");
+    }
+    else {
+      currentCategory = false;
+      currentShow = show;
+      $(".show:not(.category)[data-show-id='" + show + "']").addClass("selected");
+    }
     $("#videos").hide();
     getVideos();
-    $("#shows .show").removeClass("selected");
-    $("#show-" + show).addClass("selected");
   }
 
 }
@@ -280,7 +284,8 @@ function renderVideo(video, live) {
   }
   var time = live ? "" : "<span class='video-time'>" + toHHMMSS(video.length_seconds) + "</span>";
   var image = live ? "https://" + video.image : video.image.medium_url;
-  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + image + ");'><span class='highlight'></span><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + (live ? "<span class='live'>LIVE NOW!</span>" : "") + "</div>";
+  var postedDate = live ? "<span class='posted live'>LIVE NOW!</span>" : "<span class='posted'>" + formatDateString(video.publish_date) + "</span>";
+  return "<div class='video' id='video-" + video.id + "' style='background-image:url(" + image + ");'><span class='highlight'></span><a href='javascript:void(0)'>" + video.name + "</a>" + savedTimer + time + postedDate + "</div>";
 }
 
 function getVideos() {
@@ -289,7 +294,7 @@ function getVideos() {
       renderVideos();
     });
   } else {
-    getVideosForShow(currentShow, function(){
+    getVideosForShow(function(){
       renderVideos();
     }, 0);
   }
@@ -361,7 +366,7 @@ function updateVideoTime() {
   jsVideo.ready(function(){
     if (currentVideo.id != "live") {
       corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + jsVideo.currentTime(), function(data){
-        console.log(data);
+        // console.log(data);
       });
     }
   });
@@ -374,7 +379,7 @@ function closeVideo() {
     jsVideo.pause();
     if (currentVideo.id != "live") {
       corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + jsVideo.currentTime(), function(data){
-        console.log(data);
+        // console.log(data);
       });
       videos.forEach(function(video){
         if (video.id == currentVideo.id)
@@ -430,9 +435,8 @@ $(function() {
   });
   $(window).scroll(function(){
     if (readyToLoadMore && currentShow != "continue" && videos.length > 0 && $("#videos").height() + $("#videos").offset().top < $(this).height() + $(this).scrollTop() + 500) {
-      console.log("loading more videos");
       readyToLoadMore = false;
-      getVideosForShow(currentShow, function(){
+      getVideosForShow(function(){
         renderVideos();
         readyToLoadMore = true;
       }, currentOffset + Constants.videosPerRequest);

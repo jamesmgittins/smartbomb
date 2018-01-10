@@ -99,20 +99,24 @@ input[type="text"] {
 
 #videos .video .video-time {
   position: absolute;
-  left: 20px;
+  left: 10px;
   bottom: 20px;
-  font-size: 18px;
+  font-size: 20px;
   padding:5px;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-#videos .video .live {
+#videos .video .posted {
   position: absolute;
-  right: 20px;
-  top: 20px;
-  font-size: 24px;
+  right: 10px;
+  top: 10px;
+  font-size: 20px;
   padding:5px;
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+#videos .video .posted.live {
+  font-size: 24px;
 }
 
 #videos .video .video-timer {
