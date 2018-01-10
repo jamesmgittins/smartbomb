@@ -139,24 +139,27 @@ function playpodcast(name, mp3, image) {
   if ($("#video-container").is(":visible"))
     return false;
 
+  $("#video-player").hide();
+  $("#audio-player").show();
+
   currentVideo = undefined;
 
-  jsVideo.src({
+  jsAudio.src({
     src:mp3,
     type:"audio/mp3",
     label:"mp3",
     selected:true
   });
 
-  jsVideo.ready(function() {
+  jsAudio.ready(function() {
 
     $("#video-container").show();
     $("#video-title").text(name);
 
-    jsVideo.poster(image);
-    jsVideo.play();
-    jsVideo.playbackRate(2);
-    jsVideo.playbackRate(1);
+    jsAudio.poster(image);
+    jsAudio.play();
+    jsAudio.playbackRate(2);
+    jsAudio.playbackRate(1);
 
   });
 }

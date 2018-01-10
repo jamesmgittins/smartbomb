@@ -181,6 +181,10 @@ input[type="text"] {
   width:100%;
   height:480px;
 }
+#audio-player {
+  margin-top:10px;
+  width:100%;
+}
 
 a.btn {
   background-color: #222;
@@ -189,12 +193,12 @@ a.btn {
   text-decoration: none;
 }
 
-.video-js {
-  font-size: 25px;
+a.btn:hover {
+  background-color: #334;
 }
 
-.vjs-default-skin.vjs-paused .vjs-big-play-button {
-  display: none;
+.video-js {
+  font-size: 25px;
 }
 
 .vjs-quality-selector .vjs-menu-button {

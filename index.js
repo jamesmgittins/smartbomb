@@ -40,7 +40,7 @@ var stopLoadingContinueVideos = true;
 var videoSource;
 var timerInterval;
 var requestInProgress = false;
-var jsVideo;
+var jsVideo, jsAudio;
 
 
 
@@ -330,6 +330,8 @@ function playVideo(video) {
     return false;
 
   currentVideo = video;
+  $("#video-player").show();
+  $("#audio-player").hide();
 
   if (video.id == "live") {
     jsVideo.src({src:video.stream + "?api_key=" + regToken, type:"application/x-mpegURL"});
@@ -362,10 +364,13 @@ function playVideo(video) {
     $("#video-container").show();
     $("#video-title").text(currentVideo.name);
 
-    if (video.saved_time && video.id != "live") {
-      jsVideo.currentTime(video.saved_time);
+    if (video.id != "live") {
+      if (video.saved_time) {
+        jsVideo.currentTime(video.saved_time);
+      }
       timerInterval = setInterval(updateVideoTime, 20000);
     }
+
     jsVideo.poster("standby.jpg");
 
     jsVideo.play();
@@ -384,7 +389,7 @@ function updateVideoTime() {
     if (currentVideo.id != "live") {
       corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + jsVideo.currentTime(), function(data){
         // console.log(data);
-      });
+      }, true);
     }
   });
 }
@@ -404,6 +409,11 @@ function closeVideo() {
       });
       renderVideos();
     }
+    $("#video-container").hide();
+  });
+
+  jsAudio.ready(function(){
+    jsAudio.pause();
     $("#video-container").hide();
   });
 }
@@ -453,6 +463,21 @@ $(function() {
         "qualitySelector",
         "playbackRateMenuButton",
         "fullscreenToggle"
+      ]
+    }
+  });
+  jsAudio = videojs("audio-player", {
+    controls:true,
+    autoplay:false,
+    preload:'auto',
+    playbackRates:[1,1.25,1.5,2],
+    children:['controlBar'],
+    controlBar: {
+      children: [
+        "playToggle",
+        "volumePanel",
+        "progressControl",
+        "playbackRateMenuButton"
       ]
     }
   });
