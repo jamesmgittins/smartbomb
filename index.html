@@ -11,8 +11,10 @@
     <link href="https://vjs.zencdn.net/6.6.0/video-js.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="lib/jfeed.js"></script>
     <script src="utils.js"></script>
     <script src="index.js"></script>
+    <script src="podcast.js"></script>
   </head>
   <body>
 
@@ -23,7 +25,15 @@
       <p id="reg-status"></p>
     </div>
 
-    <div id="shows" style="display:none;">
+    <div id="top-menu" style="display:none;">
+      <div class="menu-option selected" data-menu-option="videos"><a href="javascript:void(0)">Videos</a></div>
+      <div class="menu-option" data-menu-option="podcasts"><a href="javascript:void(0)">Podcasts</a></div>
+    </div>
+
+    <div id="shows" style="display:none;" class="nav-bar">
+    </div>
+
+    <div id="podcasts" style="display:none;" class="nav-bar">
     </div>
 
     <div id="videos" style="display:none;">
@@ -42,7 +52,7 @@
     </div>
 
     <script src="https://vjs.zencdn.net/6.6.0/video.js"></script>
-    <script src="videojs-contrib-hls.min.js"></script>
+    <script src="lib/videojs-contrib-hls.min.js"></script>
     <script src="https://unpkg.com/silvermine-videojs-quality-selector/dist/js/silvermine-videojs-quality-selector.min.js"></script>
   </body>
 </html>

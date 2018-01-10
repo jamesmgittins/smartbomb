@@ -24,31 +24,57 @@ input[type="text"] {
   transform: translate(-50%, -50%);
 }
 
-#shows {
+#top-menu a {
+  line-height: 50px;
+}
+
+#top-menu .menu-option {
+  padding: 0 10px 0 10px;
+  display: inline-block;
+  cursor: pointer;
+}
+#top-menu .menu-option a {
+  text-decoration: none;
+}
+
+#top-menu .menu-option:hover {
+  text-decoration: underline;
+  background-color: #112;
+}
+
+#top-menu .menu-option:hover a {
+  text-decoration: underline;
+}
+
+#top-menu .menu-option.selected {
+  background-color: #334;
+}
+
+.nav-bar {
   width:17%;
   /*display: inline-block;*/
   float:left;
 }
 
-#shows .show {
+.nav-bar > div {
   padding: 0 10px 0 10px;
   cursor: pointer;
 }
 
-#shows .show a {
+.nav-bar > div a {
   text-decoration: none;
   line-height: 50px;
 }
 
-#shows .show:hover a {
+.nav-bar > div:hover a {
   text-decoration: underline;
 }
 
-#shows .show:hover {
+.nav-bar > div:hover {
   background-color: #112;
 }
 
-#shows .show.selected {
+.nav-bar > div.selected {
   background-color: #334;
 }
 
@@ -58,7 +84,7 @@ input[type="text"] {
   float:left;
 }
 
-#videos .video {
+#videos > div {
   width: 500px;
   height: 281px;
   margin:5px;
@@ -70,7 +96,7 @@ input[type="text"] {
   cursor: pointer;
 }
 
-#videos .video .highlight {
+#videos > div .highlight {
   position: absolute;
   top:0;
   left:0;
@@ -80,11 +106,11 @@ input[type="text"] {
   opacity: 0;
 }
 
-#videos .video:hover .highlight {
+#videos > div:hover .highlight {
   opacity: 0.2;
 }
 
-#videos .video a {
+#videos > div a {
   color:#fff;
   text-decoration: none;
   background-color: rgba(0, 0, 0, 0.7);
@@ -97,7 +123,7 @@ input[type="text"] {
   transform: translate(-50%,-50%);
 }
 
-#videos .video .video-time {
+#videos > div .video-time {
   position: absolute;
   left: 10px;
   bottom: 20px;
@@ -106,7 +132,7 @@ input[type="text"] {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-#videos .video .posted {
+#videos > div .posted {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -115,11 +141,11 @@ input[type="text"] {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-#videos .video .posted.live {
+#videos > div .posted.live {
   font-size: 24px;
 }
 
-#videos .video .video-timer {
+#videos > div .video-timer {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -128,7 +154,7 @@ input[type="text"] {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-#videos .video .video-timer-marker {
+#videos > div .video-timer-marker {
   position: absolute;
   left: 0;
   bottom: 0;

@@ -1,12 +1,14 @@
 var Constants = {
   appName:"smartbomb",
   storedTokenName:"smartBombRegToken",
-  cacheTime: 60000,
+  cacheTime: 120000,
   liveVideoCheckTime: 60000,
   videoFields:"&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time",
   videosLimit : "&limit=30",
   videosPerRequest : 30
 };
+
+var currentMenuOption = "videos";
 
 var videoCategories =[
   {id:20,name:"Best Of"},
@@ -153,6 +155,10 @@ function getVideosForShow(callback, offset) {
 
 
 function getVideoShows(callback) {
+  if (videoShows.length > 0) {
+    callback();
+    return;
+  }
   corsRequest("https://www.giantbomb.com/api/video_shows/?api_key=" + regToken + "&sort=latest:desc", function(data){
     if (data.error == "OK") {
       videoShows = data.results;
@@ -183,7 +189,10 @@ function getAllSavedTimes(callback) {
   });
 }
 
+var liveTimeout;
+
 function getLiveStream(callback) {
+  clearTimeout(liveTimeout);
   corsRequest("https://www.giantbomb.com/api/video/current-live/?api_key=" + regToken, function(data){
     if (data.success && data.video) {
       liveVideo = data.video;
@@ -193,8 +202,8 @@ function getLiveStream(callback) {
       liveVideo = undefined;
     }
     callback();
-  });
-  setTimeout(function(){
+  }, true);
+  liveTimeout = setTimeout(function(){
     getLiveStream(renderVideos);
   },Constants.liveVideoCheckTime);
 }
@@ -215,6 +224,7 @@ function renderShows() {
       });
       $("#shows").html(htmlString);
       $("#shows").show();
+      $("#podcasts").hide();
       $(".show[data-show-id='all']").addClass("selected");
       $("#shows .show").click(function(event){
         selectShow($(this).data("show-id"), $(this).hasClass("category"));
@@ -253,6 +263,11 @@ function selectShow(show, isCategory) {
 }
 
 function renderVideos() {
+
+  //class="menu-option selected" data-menu-option="videos"
+  if (currentMenuOption != "videos")
+    return;
+
   var htmlString = "";
   if (liveVideo)
     htmlString += renderVideo(liveVideo, true);
@@ -296,6 +311,7 @@ function getVideos() {
   } else {
     getVideosForShow(function(){
       renderVideos();
+      readyToLoadMore = true;
     }, 0);
   }
 }
@@ -350,6 +366,7 @@ function playVideo(video) {
       jsVideo.currentTime(video.saved_time);
       timerInterval = setInterval(updateVideoTime, 20000);
     }
+    jsVideo.poster("standby.jpg");
 
     jsVideo.play();
     jsVideo.playbackRate(2);
@@ -377,7 +394,7 @@ function closeVideo() {
 
   jsVideo.ready(function(){
     jsVideo.pause();
-    if (currentVideo.id != "live") {
+    if (currentVideo && currentVideo.id != "live") {
       corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentVideo.id + "&time_to_save=" + jsVideo.currentTime(), function(data){
         // console.log(data);
       });
@@ -402,16 +419,22 @@ function registerApp() {
       $("#reg-status").text("Success!");
       $("#enter-code").fadeOut();
       renderShows();
+      $("#top-menu").show();
     } else {
       $("#reg-status").text("Uh oh! Something went wrong, maybe the code has expired? Please try again.");
     }
   });
 }
 
+function nearEndOfVideos() {
+  return $("#videos").height() + $("#videos").offset().top < $(window).height() + $(window).scrollTop() + 500;
+}
+
 $(function() {
   regToken = localStorage.getItem(Constants.storedTokenName);
   if (regToken) {
     $("#enter-code").hide();
+    $("#top-menu").show();
     renderShows();
   } else {
     $("#enter-code").show();
@@ -434,12 +457,30 @@ $(function() {
     }
   });
   $(window).scroll(function(){
-    if (readyToLoadMore && currentShow != "continue" && videos.length > 0 && $("#videos").height() + $("#videos").offset().top < $(this).height() + $(this).scrollTop() + 500) {
+    if (currentMenuOption == "videos" && readyToLoadMore && currentShow != "continue" && videos.length > 0 && nearEndOfVideos()) {
       readyToLoadMore = false;
       getVideosForShow(function(){
         renderVideos();
         readyToLoadMore = true;
       }, currentOffset + Constants.videosPerRequest);
+    }
+    if (currentMenuOption == "podcasts" && nearEndOfVideos()) {
+      readyToLoadMore = false;
+      podcastScrollDown();
+      readyToLoadMore = true;
+    }
+  });
+  $("#top-menu .menu-option").click(function(){
+    if (readyToLoadMore) {
+      var clicked = $(this).data("menu-option");
+      if (clicked == "videos")
+        renderShows();
+      if (clicked == "podcasts")
+        renderPodcasts();
+
+      $("#top-menu .menu-option").removeClass("selected");
+      $("#top-menu .menu-option[data-menu-option='" + clicked + "']").addClass("selected");
+      currentMenuOption = clicked;
     }
   });
 });

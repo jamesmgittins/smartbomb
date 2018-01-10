@@ -16,12 +16,14 @@ function upperCaseF(a){
     }, 1);
 }
 
-function corsRequest(url, callback) {
+function corsRequest(url, callback, hideSpinner) {
   if (requestInProgress)
     return false;
 
   requestInProgress = true;
-  $(".spinner").show();
+  if (!hideSpinner)
+    $(".spinner").show();
+    
   $.ajax ({
     type: 'GET',
     dataType: 'jsonp',
