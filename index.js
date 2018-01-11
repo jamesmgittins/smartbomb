@@ -3,9 +3,9 @@ var Constants = {
   storedTokenName:"smartBombRegToken",
   cacheTime: 120000,
   liveVideoCheckTime: 60000,
-  videoFields:"&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time",
-  videosLimit : "&limit=30",
-  videosPerRequest : 30
+  videoFields: "&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time",
+  videosLimit: "&limit=30",
+  videosPerRequest: 30
 };
 
 var currentMenuOption = "videos";
