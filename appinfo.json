@@ -1,0 +1,13 @@
+{
+    "vendor": "James Gittins",
+    "largeIcon": "largeIcon.png",
+    "icon": "icon.png",
+    "main": "index.html",
+    "id": "com.jamesgittins.smartbomb",
+    "title": "Smartbomb",
+    "appDescription": "View videos from giantbomb.com",
+    "type": "web",
+    "version": "0.0.1",
+    "uiRevision":2,
+    "disableBackHistoryAPI":true
+}

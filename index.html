@@ -2,49 +2,87 @@
 <html>
   <head>
     <title>Smartbomb</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
-    <link href="https://vjs.zencdn.net/6.6.0/video-js.css" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <!-- <link href="lib/video-js.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/mediaelementplayer.min.css">
+    <script src="webOSjs-0.1.0/webOS.js"></script>
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="lib/owl.carousel.min.js"></script>
     <script src="lib/jfeed.js"></script>
-    <script src="utils.js"></script>
-    <script src="index.js"></script>
-    <script src="podcast.js"></script>
+    <script src="lib/mediaelement-and-player.min.js"></script>
+    <!-- <script src="lib/video.min.js"></script>
+    <script src="lib/videojs-contrib-hls.min.js"></script>
+    <script src="lib/youtube.min.js"></script> -->
+    <script src="js/gbcache.js"></script>
+    <script src="js/gbendpoints.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/videos.js"></script>
+    <script src="js/gbvideo.js"></script>
+    <script src="js/podcast.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/webosoverrides.js"></script>
   </head>
   <body>
 
-    <div id="enter-code" style="display:none;">
-      <p>This application requires an account with giantbomb.com</p>
-      <p>Please go to <a href="https://www.giantbomb.com/app/smartbomb" target="_blank">www.giantbomb.com/app/smartbomb</a> and enter the app code given below</p>
-      <input type="text" id="app-code" onkeydown="upperCaseF(this)" autocapitalize="characters"/>
-      <a class="btn" onclick="registerApp();" href="javascript:void(0)">Register</a>
+    <img class="bg-image"/>
+
+    <div id="enter-code" style="display:none;" class="dialog">
+      <p>This app requires an account with giantbomb.com</p>
+      <p>Once you have an account, please go to</p><a href="https://www.giantbomb.com/app/smartbomb" target="_blank">www.giantbomb.com/app/smartbomb</a><p>and enter the app code given below</p>
+      <div>
+          <input type="text" id="app-code" onchange="registerApp();" autocapitalize="characters"/>
+      </div>
       <p id="reg-status"></p>
     </div>
 
+    <div id="search-form" style="display:none;" class="dialog">
+      <p>Press enter to search or back to cancel</p>
+      <div>
+          <input type="text" id="search-input" onchange="performSearch();"/>
+      </div>
+    </div>
+
+    <img src="icon.png" class="logo"/>
+
     <div id="top-menu" style="display:none;">
-      <div class="menu-option selected" data-menu-option="videos"><a href="javascript:void(0)">Videos</a></div>
-      <div class="menu-option" data-menu-option="podcasts"><a href="javascript:void(0)">Podcasts</a></div>
+      <div id="live-menu-option" class="menu-option" data-menu-option="live" style="display:none;"><a href="javascript:void(0)">Live Now!</a></div
+      ><div class="menu-option selected" data-menu-option="videos"><a href="javascript:void(0)">Videos</a></div
+      ><div class="menu-option" data-menu-option="shows"><a href="javascript:void(0)">Shows</a></div
+      ><div class="menu-option" data-menu-option="search"><a href="javascript:void(0)">Search</a></div
+      ><div class="menu-option" data-menu-option="podcasts"><a href="javascript:void(0)">Podcasts</a></div>
+      
     </div>
 
     <div id="shows" style="display:none;" class="nav-bar">
     </div>
 
-    <div id="podcasts" style="display:none;" class="nav-bar">
+    <div id="media-view">
     </div>
 
     <div id="videos" style="display:none;">
     </div>
 
+    <div id="no-results" style="display:none;">
+      <p>No results</p>
+    </div>
+
+    <div class="play-buttons">
+        
+    </div>
+
+    <p class="media-error"></p>
+
     <div id="video-container" style="display:none;">
-      <span id="video-title"></span>
-      <a class="btn" onclick="closeVideo();" href="javascript:void(0)">Close</a>
-      <video id="video-player" class="video-js vjs-default-skin" controls autoplay poster="standby.jpg"></video>
-      <audio id="audio-player" class="video-js vjs-default-skin" controls autoplay poster="standby.jpg"></audio>
+      <video id="video-player" class="video-js vjs-default-skin" controls autoplay preload="none" poster="standby.jpg"></video>
+    </div>
+
+    <div id="audio-container" style="display:none;">
+      <span id="audio-title"></span>
+      <audio id="audio-player" class="video-js vjs-default-skin" controls autoplay></audio>
     </div>
 
     <div class="spinner" style="display:none;">
@@ -53,8 +91,7 @@
       <div class="bounce3"></div>
     </div>
 
-    <script src="https://vjs.zencdn.net/6.6.0/video.js"></script>
-    <script src="lib/videojs-contrib-hls.min.js"></script>
-    <script src="https://unpkg.com/silvermine-videojs-quality-selector/dist/js/silvermine-videojs-quality-selector.min.js"></script>
+    
+
   </body>
 </html>
