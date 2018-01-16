@@ -96,18 +96,19 @@ function checkPodcastCache(id, request, callback) {
 function renderPodcasts() {
   var htmlString = "";
   for(var i=0; i< podcastShows.length; i++) {
-    htmlString += "<div class='podcast' data-podcast-id='" + i + "'><a href='javascript:void(0)'>" + podcastShows[i].name + "</a></div>";
+    htmlString += "<div class='podcast' data-podcast-id='" + i + "' data-owl-index='" + i + "'><a href='javascript:void(0)'>" + podcastShows[i].name + "</a></div>";
   }
-  $("#shows").html(htmlString);
+  owlShowInit(htmlString, podcastShows.length);
   resetVideoCarousel();
   
   $("#shows .podcast").off("click").on("click",function(){
     selectPodcast($(this).data("podcast-id"));
+    owlShowGoTo($(this).data("owl-index"));
   });
 
-  $("#shows > div[data-podcast-id='" + currentPodcast + "']").addClass("selected");
-  carouseliseShows();
-  selectPodcast(0);
+  $("#shows .podcast[data-podcast-id='" + currentPodcast + "']").addClass("selected");
+  owlShowJumpTo($(".podcast.selected").data("owl-index"));
+  selectPodcast(currentPodcast);
   setNavBarMouseOverActions();
 }
 
@@ -118,8 +119,6 @@ function selectPodcast(id) {
   currentPodcast = id;
   $("#shows .podcast").removeClass("selected");
   $("#shows .podcast[data-podcast-id=" + id + "]").addClass("selected");
-
-  carouselAnimate();
 
   if (selectPodcastTimeout)
       clearTimeout(selectPodcastTimeout);

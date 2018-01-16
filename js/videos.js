@@ -119,14 +119,17 @@ function getVideoShows(callback) {
     callback();
     setTimeout(function () {
       GbEndpoints.videoShows(function (data) {
-        videoShows = data.results;
-        GbCache.saveShows(videoShows);
-        if (currentMenuOption == "shows")
-          renderShows();
+        if (!arrayEquals(videoShows, data.results)) {
+          videoShows = data.results;
+          GbCache.saveShows(videoShows);
+          if (currentMenuOption == "shows")
+            renderShows();
+        }
       })
     }, 10000);
   } else {
     GbEndpoints.videoShows(function (data) {
+      
       videoShows = data.results;
       GbCache.saveShows(videoShows);
       callback();
@@ -140,10 +143,12 @@ function getVideoCategories(callback) {
     callback();
     setTimeout(function () {
       GbEndpoints.videoCategories(function (data) {
-        videoCategories = extraVideoCategories.concat(data.results);
-        GbCache.saveCategories(videoCategories);
-        if (currentMenuOption == "videos")
-          renderShows();
+        if (!arrayEquals(videoCategories, extraVideoCategories.concat(data.results))) {
+          videoCategories = extraVideoCategories.concat(data.results);
+          GbCache.saveCategories(videoCategories);
+          if (currentMenuOption == "videos")
+            renderShows();
+        }
       });
     }, 10000);
   } else {

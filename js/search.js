@@ -23,19 +23,20 @@ function performSearch() {
 function renderSearchHistory(callback) {
 
   var wasActive = $("#shows .active").length > 0;
-
+  var owlIndex = 0;
   var htmlString = "";
-  htmlString += renderShow(newSearchOption.id, newSearchOption.label);
+  htmlString += renderShow(newSearchOption.id, newSearchOption.label, false, owlIndex++);
 
   for (var i = 0; i < searchHistory.length; i++) {
-    htmlString += renderShow("search-" + searchHistory[i], cleanTextForDisplay(decodeURIComponent(searchHistory[i])));
+    htmlString += renderShow("search-" + searchHistory[i], cleanTextForDisplay(decodeURIComponent(searchHistory[i])), false, owlIndex++);
   }
 
-  $("#shows").html(htmlString);
+  owlShowInit(htmlString, searchHistory.length + 1);
   $("#shows").show();
 
   $("#shows .show").click(function (event) {
     selectSearchHistory($(this).data("show-id"));
+    owlShowGoTo($(this).data("owl-index"));
   });
 
   if (currentSearch) {
@@ -49,8 +50,8 @@ function renderSearchHistory(callback) {
       $(".show[data-show-id='" + newSearchOption.id + "']").addClass("active");
     }
   }
+  owlShowJumpTo($(".show.selected").data("owl-index"));
 
-  carouseliseShows();
   setNavBarMouseOverActions();
   if (currentSearch) {
     selectSearchHistory("search-" + currentSearch);
@@ -65,7 +66,6 @@ function displaySearchForm() {
 function selectNewSearchOption() {
   $("#shows .show").removeClass("selected");
   $(".show[data-show-id='" + newSearchOption.id + "']").addClass("selected");
-  carouselAnimate();
   resetVideoCarousel();
   hideMediaView();
   currentSearch = undefined;
@@ -95,7 +95,6 @@ function selectSearchHistory(searchId) {
 
     showSelectTimeout = setTimeout(function () { getSearchResults(); }, 800);
   }
-  carouselAnimate();
 }
 
 function getSearchResults() {

@@ -84,16 +84,18 @@ input[type="text"] {
 }
 
 #top-menu .menu-option.active,
-.nav-bar > div.active  {
+.nav-bar  div.show.active,
+.nav-bar  div.podcast.active  {
   background-color: $focus-color !important;
 }
 #top-menu .menu-option.active a,
-.nav-bar > div.active a {
+.nav-bar  div.show.active a,
+.nav-bar  div.podcast.active a {
   color: #fff;
 }
 
 #top-menu .menu-option.selected,
-.nav-bar > div.selected {
+.nav-bar  div.selected {
   background-color: #404040;
 }
 
@@ -121,17 +123,21 @@ input[type="text"] {
 
 .nav-bar {
   height: 70px;
-  overflow: hidden;
   position: relative;
   background-color: #262626;
+  overflow: visible;
 
-  > div {
+  div.podcast,
+  div.show {
     padding: 10px 20px 10px 20px;
     cursor: pointer;
-    position: absolute;
-    top:0;
     text-align: center;
     font-size: 32px;
+    display: inline;
+
+    &.width-set {
+      display: block;
+    }
 
     a {
       text-decoration: none;
@@ -147,12 +153,14 @@ input[type="text"] {
       content: " >";
       opacity: 0;
     }
+
+    &.selected a:before,
+    &.selected a:after  {
+      opacity: 1;
+    }
   }
 
-  > div.selected a:before,
-  > div.selected a:after  {
-    opacity: 1;
-  }
+  
 }
 
 #videos {
@@ -355,7 +363,7 @@ a.btn.active {
 .spinner {
   position: fixed;
   z-index: 500;
-  top:50%;
+  top:40%;
   left:50%;
   width: 200px;
   text-align: center;

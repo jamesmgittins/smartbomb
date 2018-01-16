@@ -1,3 +1,7 @@
+function arrayEquals(a1, a2) {
+  return JSON.stringify(a1) === JSON.stringify(a2);
+}
+
 function toHHMMSS(value) {
     var sec_num = parseInt(value, 10); // don't forget the second param
     var hours   = Math.floor(sec_num / 3600);
@@ -61,6 +65,68 @@ var monthNames = [
   "Aug", "Sep", "Oct",
   "Nov", "Dec"
 ];
+
+$.fn.force_redraw = function() {
+  return this.hide( 0, function() {
+      $( this ).show();
+  } );
+}
+
+var readyToSelectAShow = true;
+
+function owlShowInit(html, items) {
+  $("#shows").replaceWith('<div id="shows" style="" class="nav-bar"></div>');
+  $("#shows").html(html);
+  
+  $("#shows").force_redraw();
+
+  for (var i = 0; i < $("#shows > div").length; i++) {
+    var width = Math.round($("#shows > div")[i].getBoundingClientRect().width);
+    width = width > 1500 ? 350 : width;
+    $($("#shows > div")[i]).css("width", width + "px");
+  }
+
+  $("#shows > div").addClass("width-set");
+  $("#shows > div").addClass('item');
+  $("#shows").addClass("owl-carousel").owlCarousel({
+    items: items || 10,
+    center:true,
+    loop: items != 1,
+    margin:0,
+    autoWidth:true,
+    mouseDrag:false,
+    touchDrag:false,
+    pullDrag:false
+  });
+  $("#shows").on("translated.owl.carousel",function(e){
+    readyToSelectAShow = true;
+  });
+  readyToSelectAShow = true;
+}
+
+function owlShowNext() {
+  $("#shows").trigger("next.owl.carousel");
+}
+
+function owlShowPrevious() {
+  $("#shows").trigger("prev.owl.carousel");
+}
+
+var readyTimeout;
+
+function owlShowGoTo(index) {
+  $("#shows").trigger("to.owl.carousel",index);
+  if (readyTimeout)
+    clearTimeout(readyTimeout);
+  readyTimeout = setTimeout(function() {
+    readyToSelectAShow = true;
+  }, 500);
+}
+
+function owlShowJumpTo(index) {
+  $('#shows').trigger('to.owl.carousel', [index, 0, true]);
+}
+
 // "2018-01-05 17:11:00"
 function formatDateString(date) {
   var year = date.substring(0,4);
@@ -83,6 +149,9 @@ function owlInit() {
     mouseDrag:false,
     touchDrag:false,
     pullDrag:false
+  });
+  $("#videos").on("translated.owl.carousel",function(e){
+    readyToMove = true;
   });
 }
 

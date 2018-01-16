@@ -212,17 +212,8 @@ function left() {
         break;
 
       case 1:
-        if (readyToSelectAShow && !requestInProgress) {
-          var prev = $("#shows .active").prev();
-          if (prev.length == 0) {
-            prev = $("#shows > div").last();
-          }
-          $("#shows .active").removeClass("active");
-          prev.addClass("active");
-          if (prev.data("show-id") == newSearchOption.id) {
-            selectNewSearchOption();
-          } else
-            prev.click();
+        if (!requestInProgress) {
+          previousShow();
         }
         break;
 
@@ -262,18 +253,8 @@ function right() {
         break;
 
       case 1:
-        if (readyToSelectAShow && !requestInProgress) {
-          var next = $("#shows .active").next();
-          if (next.length == 0) {
-            next = $("#shows > div").first();
-          }
-          $("#shows .active").removeClass("active");
-          next.addClass("active");
-          if (next.data("show-id") == newSearchOption.id) {
-            selectNewSearchOption();
-          }
-          else
-            next.click();
+        if (!requestInProgress) {
+          nextShow();
         }
         break;
 
@@ -304,88 +285,11 @@ function select() {
     }
 }
 
-function carouseliseElements(selector, padding, dontLoop) {
-
-  var centerIndex = 0;
-  for (var i = 0; i < $(selector).length; i++) {
-    if ($($(selector)[i]).hasClass("selected")) {
-      centerIndex = i;
-      break;
-    }
-  }
-  $(selector).css("left", "0");
-  var leftPos = (window.innerWidth / 2) - $(selector)[centerIndex].getBoundingClientRect().width / 2;
-  $($(selector)[centerIndex]).css("left", leftPos + "px");
-
-  leftPos += $(selector)[centerIndex].getBoundingClientRect().width + padding;
-
-  for (var i = centerIndex + 1; i < $(selector).length; i++) {
-    if (leftPos <= window.innerWidth || dontLoop) {
-      $($(selector)[i]).css("left", Math.round(leftPos) + "px");
-      leftPos += $(selector)[i].getBoundingClientRect().width + padding;
-    }
-  }
-
-  if (!dontLoop) {
-    for (var i = 0; i < centerIndex; i++) {
-      if (leftPos <= window.innerWidth) {
-        $($(selector)[i]).css("left", Math.round(leftPos) + "px");
-        leftPos += $(selector)[i].getBoundingClientRect().width + padding;
-      }
-    }
-  }
-
-
-  leftPos = (window.innerWidth / 2) - $(selector)[centerIndex].getBoundingClientRect().width / 2;
-
-  for (var i = centerIndex - 1; i >= 0; i--) {
-    if ($(selector)[i].getBoundingClientRect().left == 0) {
-      leftPos -= ($(selector)[i].getBoundingClientRect().width + padding);
-      $($(selector)[i]).css("left", Math.round(leftPos) + "px");
-    }
-  }
-  if (!dontLoop) {
-    for (var i = $(selector).length - 1; i > centerIndex; i--) {
-      if ($(selector)[i].getBoundingClientRect().left == 0) {
-        leftPos -= ($(selector)[i].getBoundingClientRect().width + padding);
-        $($(selector)[i]).css("left", Math.round(leftPos) + "px");
-      }
-    }
-  }
-
-}
 function dummyVideo() {
   return "<div class='video disabled'></div>"
 }
 
-function carouseliseShows() {
-  // console.log("carouseliseShows");
-  carouseliseElements("#shows > div", 0);
-}
 
-var readyToSelectAShow = true;
-
-function carouselAnimate() {
-  readyToSelectAShow = false;
-
-  var centerOffset = 0;
-  for (var i = 0; i < $("#shows > div").length; i++) {
-    if ($($("#shows > div")[i]).hasClass("selected")) {
-      centerOffset = (window.innerWidth / 2) - $("#shows > div")[i].getBoundingClientRect().left - $("#shows > div")[i].getBoundingClientRect().width / 2;
-      break;
-    }
-  }
-  var promise;
-
-  for (var i = 0; i < $("#shows > div").length; i++) {
-    promise = $($("#shows > div")[i]).stop(true, true).animate({ left: "+=" + Math.round(centerOffset) }, 200).promise();
-  }
-
-  promise.done(function () {
-    carouseliseShows();
-    readyToSelectAShow = true;
-  });
-}
 
 function setTopMenuClicks() {
   $("#top-menu .menu-option").click(function () {
@@ -429,7 +333,7 @@ function setTopMenuMouseOverActions() {
 }
 
 function setNavBarMouseOverActions() {
-  $("#shows > div").off("mouseenter mouseleave").hover(function () {
+  $("#shows div.show, #shows div.podcast").off("mouseenter mouseleave").hover(function () {
     $(".active").removeClass("active");
     $(this).addClass("active");
     currentUILevel = 1;
@@ -497,4 +401,43 @@ function changeBackgroundImage(src) {
 function resetVideoCarousel() {
   $("#videos").hide();
   owlResetPositions();
+}
+
+function nextShow() {
+  if (!readyToSelectAShow || requestInProgress)
+    return;
+  readyToSelectAShow = false;
+
+  var max = 0;
+  $("#shows [data-owl-index]").each(function(){
+    if ($(this).data("owl-index") > max)
+      max = $(this).data("owl-index");
+  })
+  var owlIndex = $("#shows .selected[data-owl-index]").data("owl-index") + 1;
+
+  if (owlIndex > max)
+    owlIndex = 0;
+
+  $("#shows [data-owl-index]").removeClass("active");
+  $("#shows [data-owl-index='" + owlIndex + "']").addClass("active").first().click();
+}
+
+function previousShow() {
+  if (!readyToSelectAShow || requestInProgress)
+    return;
+
+  readyToSelectAShow = false;
+
+  var max = 0;
+  $("#shows [data-owl-index]").each(function(){
+    if ($(this).data("owl-index") > max)
+      max = $(this).data("owl-index");
+  })
+  var owlIndex = $("#shows .selected[data-owl-index]").data("owl-index") - 1;
+
+  if (owlIndex < 0)
+    owlIndex = max;
+
+  $("#shows [data-owl-index]").removeClass("active");
+  $("#shows [data-owl-index='" + owlIndex + "']").addClass("active").first().click();
 }

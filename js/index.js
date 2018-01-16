@@ -1,6 +1,6 @@
 var Constants = {
   webOsMode: true,
-  corsProxy: "",
+  corsProxy: "https://cors.io/",
   appName: "smartbomb",
   cacheTime: 120000,
   liveVideoCheckTime: 60000,
@@ -8,9 +8,9 @@ var Constants = {
   videosPerRequest: 30,
   itemsInCarousel: 11,
   minCarouselTime: 80,
-  testLiveStream: true,
+  testLiveStream: false,
   freeApi:"",
-  debugKey:"3298w98hfajsdo02!"
+  debugKey:"asdh7238ahd9aj"
 };
 
 var currentMenuOption = "videos";
@@ -50,42 +50,49 @@ function renderShows(callback) {
   var wasActive = $("#shows .active").length > 0;
 
   if (currentMenuOption == "live") {
-    $("#shows").html(renderShow("live", "Live Streams"));
+    owlShowInit(renderShow("live", "Live Streams", false, 0), 1);
+
     $("#shows").show();
     $(".show[data-show-id='live']").addClass("selected");
     if (wasActive) {
       $(".show[data-show-id='live']").addClass("active");
     }
-    carouseliseShows();
   }
 
   if (currentMenuOption == "videos") {
+    var owlIndex = 0;
     videoCategories.forEach(function (show) {
-      htmlString += renderShow(show.id, show.name, true);
+      htmlString += renderShow(show.id, show.name, true, owlIndex++);
     });
-    $("#shows").html(htmlString);
+
+    owlShowInit(htmlString);
     $("#shows").show();
     $(".show[data-show-id='" + currentCategory + "']").addClass("selected");
     if (wasActive) {
       $(".show[data-show-id='" + currentCategory + "']").addClass("active");
     }
+
+    owlShowJumpTo($(".show.selected").data("owl-index"));
+
+
     $("#shows .show").click(function (event) {
       selectShow($(this).data("show-id"), $(this).hasClass("category"));
+      owlShowGoTo($(this).data("owl-index"));
     });
-    carouseliseShows();
   }
 
   if (currentMenuOption == "shows") {
     getVideoShows(function () {
-
+      var owlIndex = 0;
       videoShows.forEach(function (show) {
-        htmlString += renderShow(show.id, show.title);
+        htmlString += renderShow(show.id, show.title, false, owlIndex++);
       });
-      $("#shows").html(htmlString);
+      owlShowInit(htmlString);
       $("#shows").show();
 
       $("#shows .show").click(function (event) {
         selectShow($(this).data("show-id"), $(this).hasClass("category"));
+        owlShowGoTo($(this).data("owl-index"));
       });
       if (!currentShow)
         currentShow = videoShows[0].id;
@@ -94,8 +101,7 @@ function renderShows(callback) {
       if (wasActive) {
         $(".show[data-show-id='" + currentShow + "']").addClass("active");
       }
-
-      carouseliseShows();
+      owlShowJumpTo($(".show.selected").data("owl-index"));
     });
   }
 
@@ -107,9 +113,9 @@ function renderShows(callback) {
 
 }
 
-function renderShow(id, name, isCategory) {
+function renderShow(id, name, isCategory, owlIndex) {
   var classes = isCategory ? "show category" : "show";
-  return "<div class='" + classes + "' data-show-id='" + id + "'><a href='javascript:void(0)'>" + name + "</a></div>";
+  return "<div class='" + classes + "' data-show-id='" + id + "' data-owl-index='" + owlIndex + "'><a href='javascript:void(0)'>" + name + "</a></div>";
 }
 
 var showSelectTimeout;
@@ -133,7 +139,6 @@ function selectShow(show, isCategory) {
       $(".show:not(.category)[data-show-id='" + show + "']").addClass("selected");
     }
     resetVideoCarousel();
-    carouselAnimate();
     if (showSelectTimeout)
       clearTimeout(showSelectTimeout);
 
@@ -232,46 +237,43 @@ var readyToMove = true;
 function nextVideo() {
   if (!readyToMove)
     return;
-  readyToMove = false;
+
   if (currentMenuOption == "podcasts") {
     if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex + 1]) {
+      readyToMove = false;
       selectPodcastEpisode(podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex + 1].id, currentlyPlayingPodcast.owlIndex + 1 > Constants.itemsInCarousel - 1 ? 0 : currentlyPlayingPodcast.owlIndex + 1);
       $("#videos .podcast").removeClass("active");
       $("." + currentlyPlayingPodcast.cssId).addClass("active");
     }
   } else {
     if (videos[currentlyPlayingVideo.arrayIndex + 1]) {
+      readyToMove = false;
       selectVideo(videos[currentlyPlayingVideo.arrayIndex + 1].id, currentlyPlayingVideo.owlIndex + 1 > Constants.itemsInCarousel - 1 ? 0 : currentlyPlayingVideo.owlIndex + 1);
       $("#videos .video").removeClass("active");
       $("." + currentlyPlayingVideo.cssId).addClass("active");
     }
   }
-  setTimeout(function () {
-    readyToMove = true;
-  }, Constants.minCarouselTime);
-
 }
 
 function previousVideo() {
   if (!readyToMove)
     return;
-  readyToMove = false;
+
   if (currentMenuOption == "podcasts") {
     if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex - 1]) {
+      readyToMove = false;
       selectPodcastEpisode(podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex - 1].id, currentlyPlayingPodcast.owlIndex - 1 < 0 ? Constants.itemsInCarousel - 1 : currentlyPlayingPodcast.owlIndex - 1);
       $("#videos .podcast").removeClass("active");
       $("." + currentlyPlayingPodcast.cssId).addClass("active");
     }
   } else {
     if (videos[currentlyPlayingVideo.arrayIndex - 1]) {
+      readyToMove = false;
       selectVideo(videos[currentlyPlayingVideo.arrayIndex - 1].id, currentlyPlayingVideo.owlIndex - 1 < 0 ? Constants.itemsInCarousel - 1 : currentlyPlayingVideo.owlIndex - 1);
       $("#videos .video").removeClass("active");
       $("." + currentlyPlayingVideo.cssId).addClass("active");
     }
   }
-  setTimeout(function () {
-    readyToMove = true;
-  }, Constants.minCarouselTime);
 }
 
 function getMoreVideos() {
