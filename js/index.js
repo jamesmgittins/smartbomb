@@ -1,6 +1,6 @@
 var Constants = {
-  webOsMode: false,
-  corsProxy: "https://cors.jamesgittins.com/",
+  webOsMode: true,
+  corsProxy: "",
   appName: "smartbomb",
   cacheTime: 120000,
   liveVideoCheckTime: 60000,
@@ -9,8 +9,8 @@ var Constants = {
   itemsInCarousel: 11,
   minCarouselTime: 80,
   testLiveStream: true,
-  freeApi:"4229264d2fbebb27782195f07a2d25a6da8da986",
-  debugKey:"D3BUG!"
+  freeApi:"",
+  debugKey:"3298w98hfajsdo02!"
 };
 
 var currentMenuOption = "videos";
