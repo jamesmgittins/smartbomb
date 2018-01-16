@@ -6,4 +6,4 @@ Giantbomb video interface for smart TVs (LG WebOS)
 # Instructions
 Download master branch. Open folder in LG webOS IDE and deploy to TV / Emulator
 
-To test in web browser, change Constants.webOsMode to false and Constants.corsProxy to a cors proxy url eg "https://cors.io" in index.js
+To test in web browser, change Constants.webOsMode to false and Constants.corsProxy to a cors proxy url eg "https://cors.io/" in index.js
