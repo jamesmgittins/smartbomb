@@ -37,7 +37,7 @@ function corsRequest(url, callback, hideSpinner) {
   requestInProgress = true;
   if (!hideSpinner)
     $(".spinner").show();
-    
+
   $.ajax ({
     type: 'GET',
     dataType: 'jsonp',
@@ -77,12 +77,12 @@ var readyToSelectAShow = true;
 function owlShowInit(html, items) {
   $("#shows").replaceWith('<div id="shows" style="" class="nav-bar"></div>');
   $("#shows").html(html);
-  
+
   $("#shows").force_redraw();
 
   for (var i = 0; i < $("#shows > div").length; i++) {
     var width = Math.round($("#shows > div")[i].getBoundingClientRect().width);
-    width = width > 1500 ? 350 : width;
+    width = width > 1000 ? 350 : width;
     $($("#shows > div")[i]).css("width", width + "px");
   }
 
@@ -194,7 +194,7 @@ function mediaElementVideoSetup(onSuccess, youtube) {
 }
 
 function mediaElementSetup() {
-  
+
   $('#audio-player').mediaelementplayer({
     audioWidth: '100%',
     audioHeight : 50,

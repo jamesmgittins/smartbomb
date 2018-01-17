@@ -3,19 +3,36 @@ body {
   background-color: #000;
   color: #DDD;
   font-size: 30px;
-  margin: 0;
-  width:1920px;
   height: 1080px;
+  margin: 0;
+}
+
+@media only screen and (max-width: 1366px) {
+  body {
+    font-size: 20px;
+  }
 }
 
 h1 {
   font-size: 50px;
 }
 
+@media only screen and (max-width: 1366px) {
+  h1 {
+    font-size: 30px;
+  }
+}
+
 .play-buttons {
   width: 100%;
   text-align: center;
   margin-top: 30px;
+}
+
+@media only screen and (max-width: 1366px) {
+  .play-buttons {
+    margin-top: 20px;
+  }
 }
 
 .play-buttons * {
@@ -29,6 +46,13 @@ a.btn.play {
   font-size: 50px;
   padding: 10px 30px;
   margin: 5px;
+}
+
+@media only screen and (max-width: 1366px) {
+  a.btn.play {
+    font-size: 30px;
+    padding: 8px 20px;
+  }
 }
 
 a, a:visited, a:hover {
@@ -61,12 +85,24 @@ input[type="text"] {
   background-color: #2b2e31;
 }
 
+@media only screen and (max-width: 1366px) {
+  #top-menu {
+    font-size: 40px;
+  }
+}
+
 #top-menu .menu-option {
   padding: 10px 20px 10px 20px;
   display: inline-block;
   cursor: pointer;
   width: 15%;
   /* margin:0 -7px; */
+}
+
+@media only screen and (max-width: 1366px) {
+  #top-menu .menu-option {
+    padding: 8px 16px 8px 16px;
+  }
 }
 
 #top-menu .menu-option a {
@@ -98,6 +134,13 @@ input[type="text"] {
   background-size: cover;
 }
 
+@media only screen and (max-width: 1366px) {
+  #media-view {
+    height: 200px;
+    padding: 20px 60px 10px 60px;
+  }
+}
+
 #media-view * {
   -webkit-animation: fadeinfull ease-in 1;
   animation: fadeinfull ease-in 1;
@@ -107,6 +150,12 @@ input[type="text"] {
 
 #media-view h1, #media-view p {
   margin: 15px;
+}
+
+@media only screen and (max-width: 1366px) {
+  #media-view h1, #media-view p {
+    margin: 10px;
+  }
 }
 
 #media-view small {
@@ -120,13 +169,28 @@ input[type="text"] {
   overflow: visible;
 }
 
+@media only screen and (max-width: 1366px) {
+  .nav-bar {
+    height: 40px;
+  }
+}
+
 .nav-bar div.podcast,
 .nav-bar div.show {
+  float: left;
   padding: 10px 20px 10px 20px;
   cursor: pointer;
   text-align: center;
   font-size: 32px;
   display: inline;
+}
+
+@media only screen and (max-width: 1366px) {
+  .nav-bar div.podcast,
+  .nav-bar div.show {
+    font-size: 24px;
+    padding: 6px 15px 6px 15px;
+  }
 }
 
 .nav-bar div.podcast.width-set,
@@ -138,6 +202,13 @@ input[type="text"] {
 .nav-bar div.show a {
   text-decoration: none;
   line-height: 50px;
+}
+
+@media only screen and (max-width: 1366px) {
+  .nav-bar div.podcast a,
+  .nav-bar div.show a {
+    line-height: 28px;
+  }
 }
 
 .nav-bar div.podcast a:before,
@@ -171,6 +242,13 @@ input[type="text"] {
   background-size: contain;
   position: relative;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 1366px) {
+  #videos .video:not(.disabled), #videos .podcast:not(.disabled) {
+    width: 300px;
+    height: 168px;
+  }
 }
 
 #videos .video:not(.disabled).active:before, #videos .podcast:not(.disabled).active:before {
@@ -207,6 +285,12 @@ input[type="text"] {
   transform: translate(-50%, -50%);
 }
 
+@media only screen and (max-width: 1366px) {
+  #videos .video:not(.disabled) a, #videos .podcast:not(.disabled) a {
+    line-height: 30px;
+  }
+}
+
 #videos .video:not(.disabled) .video-time, #videos .podcast:not(.disabled) .video-time {
   position: absolute;
   left: 10px;
@@ -214,6 +298,15 @@ input[type="text"] {
   font-size: 20px;
   padding: 5px;
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+@media only screen and (max-width: 1366px) {
+  #videos .video:not(.disabled) .video-time, #videos .podcast:not(.disabled) .video-time {
+    font-size: 16px;
+    padding: 4px;
+    left: 6px;
+    bottom: 14px;
+  }
 }
 
 #videos .video:not(.disabled) .posted, #videos .podcast:not(.disabled) .posted {
@@ -225,8 +318,23 @@ input[type="text"] {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
+@media only screen and (max-width: 1366px) {
+  #videos .video:not(.disabled) .posted, #videos .podcast:not(.disabled) .posted {
+    font-size: 16px;
+    padding: 4px;
+    right: 6px;
+    top: 6px;
+  }
+}
+
 #videos .video:not(.disabled) .posted.live, #videos .podcast:not(.disabled) .posted.live {
   font-size: 24px;
+}
+
+@media only screen and (max-width: 1366px) {
+  #videos .video:not(.disabled) .posted.live, #videos .podcast:not(.disabled) .posted.live {
+    font-size: 16px;
+  }
 }
 
 #videos .video:not(.disabled) .video-timer, #videos .podcast:not(.disabled) .video-timer {
@@ -296,7 +404,7 @@ input[type="text"] {
   text-align: center;
   padding-top: 10px;
   margin-right: 10px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 #video-container .mejs__controls .transport > span.active {
@@ -308,16 +416,17 @@ input[type="text"] {
   font-size: 32px;
   height: 70px;
   display: block;
-  width: auto;
   padding: 15px;
   margin-right: 0;
-  flex-grow: 1;
+  min-width: 1px;
+  flex: 1 0 auto;
 }
 
 #video-container .mejs__controls .transport > span.title > span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
 }
 
 #video-container .mejs__controls .mejs__time-rail {
@@ -412,16 +521,6 @@ input[type="text"] {
   width: 100%;
 }
 
-#video-title {
-  margin-right: 15px;
-}
-
-#video-player {
-  margin-top: 10px;
-  width: 100%;
-  height: 480px;
-}
-
 #audio-player {
   margin-top: 10px;
   width: 100%;
@@ -512,6 +611,13 @@ a.btn.active {
   font-size: 24px;
 }
 
+@media only screen and (max-width: 1366px) {
+  #audio-title {
+    font-size: 20px;
+    padding: 0 25px;
+  }
+}
+
 #audio-title:before {
   content: "Currently Playing: ";
 }
@@ -524,6 +630,12 @@ img.logo {
   position: absolute;
   top: 7px;
   left: 10px;
+}
+
+@media only screen and (max-width: 1366px) {
+  img.logo {
+    display: none;
+  }
 }
 
 @keyframes fadein {

@@ -10,6 +10,5 @@
     "version": "0.0.1",
     "uiRevision":2,
     "disableBackHistoryAPI":true,
-    "iconColor": "black",
-    "resolution": "1920x1080"
+    "iconColor":"#000000"
 }

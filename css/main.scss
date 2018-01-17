@@ -2,25 +2,38 @@ $bg-image-opacity : 0.2;
 $focus-color : #cf0652;
 $link-color : #69CDFF;
 $font-family : "MuseoSans",sans-serif;
+$breakpoint : 1366px;
+
+@mixin respond-to($media) {
+  @if $media == 720p {
+    @media only screen and (max-width: $breakpoint) {@content;}
+  }
+  @else if $media == 1080p {
+    @media only screen and (min-width: $breakpoint + 1) {@content;}
+  }
+}
 
 body {
   font-family: $font-family;
   background-color: #000;
   color: #DDD;
   font-size: 30px;
-  margin:0;
-  overflow: hidden;
   height:1080px;
+  @include respond-to(720p) { font-size: 20px }
+  margin:0;
+  
 }
 
 h1 {
   font-size: 50px;
+  @include respond-to(720p) { font-size: 30px;}
 }
 
 .play-buttons {
   width:100%;
   text-align: center;
   margin-top: 30px;
+  @include respond-to(720p) { margin-top: 20px;}
 
   * {
     -webkit-animation: fadeinfull ease-in 1;
@@ -34,6 +47,7 @@ a.btn.play {
   font-size: 50px;
   padding: 10px 30px;
   margin: 5px;  
+  @include respond-to(720p) { font-size: 30px; padding: 8px 20px;}
 }
 
 a, a:visited, a:hover {
@@ -62,10 +76,12 @@ input[type="text"] {
 #top-menu {
   text-align: center;
   font-size: 64px;
+  @include respond-to(720p) { font-size: 40px; }
   background-color: rgb(43, 46, 49);
 
   .menu-option {
     padding: 10px 20px 10px 20px;
+    @include respond-to(720p) { padding: 8px 16px 8px 16px; }
     display: inline-block;
     cursor: pointer;
     width: 15%;
@@ -97,6 +113,7 @@ input[type="text"] {
 #media-view {
   height:300px;
   padding: 30px 100px 20px 100px;
+  @include respond-to(720p) { height:200px; padding: 20px 60px 10px 60px;}
   text-align: center;
   background-size: cover;
   
@@ -109,6 +126,7 @@ input[type="text"] {
 
   h1, p {
     margin: 15px;
+    @include respond-to(720p) { margin: 10px;}
   }
 
   small {
@@ -118,17 +136,20 @@ input[type="text"] {
 
 .nav-bar {
   height: 70px;
+  @include respond-to(720p) { height: 40px;}
   position: relative;
   background-color: #262626;
   overflow: visible;
 
   div.podcast,
   div.show {
+    float: left;
     padding: 10px 20px 10px 20px;
     cursor: pointer;
     text-align: center;
     font-size: 32px;
     display: inline;
+    @include respond-to(720p) { font-size: 24px; padding: 6px 15px 6px 15px;}
 
     &.width-set {
       display: block;
@@ -137,6 +158,7 @@ input[type="text"] {
     a {
       text-decoration: none;
       line-height: 50px;
+      @include respond-to(720p) { line-height:28px;}
     }
 
     a:before {
@@ -166,6 +188,7 @@ input[type="text"] {
   .video:not(.disabled), .podcast:not(.disabled) {
     width: 450px;
     height: 253px;
+    @include respond-to(720p) { width : 300px; height : 168px;}
     background-color: #222;
     text-align: center;
     background-size: contain;
@@ -203,6 +226,7 @@ input[type="text"] {
       left: 50%;
       -webkit-transform: translate(-50%,-50%);
       transform:translate(-50%,-50%);
+      @include respond-to(720p) { line-height: 30px; }
     }
 
     .video-time {
@@ -211,6 +235,7 @@ input[type="text"] {
       bottom: 20px;
       font-size: 20px;
       padding:5px;
+      @include respond-to(720p) { font-size: 16px; padding: 4px; left:6px; bottom:14px;}
       background-color: rgba(0, 0, 0, 0.7);
     }
 
@@ -220,11 +245,13 @@ input[type="text"] {
       top: 10px;
       font-size: 20px;
       padding:5px;
+      @include respond-to(720p) { font-size: 16px; padding: 4px; right:6px; top:6px;}
       background-color: rgba(0, 0, 0, 0.7);
     }
 
     .posted.live {
       font-size: 24px;
+      @include respond-to(720p) { font-size: 16px;}
     }
 
     .video-timer {
@@ -285,7 +312,7 @@ input[type="text"] {
         text-align: center;
         padding-top: 10px;
         margin-right: 10px;
-        flex-shrink: 0;
+        flex: 0 0 auto;
 
         &.active {
           background-color: #000;
@@ -296,16 +323,17 @@ input[type="text"] {
           font-size: 32px;
           height: 70px;
           display: block;
-          width: auto;
+          // width: auto;
           padding: 15px;
           margin-right: 0;
-          
-          flex-grow: 1;
+          min-width: 1px;
+          flex:1 0 auto;
 
           > span {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            display: block;
           }
         }
       }
@@ -411,16 +439,6 @@ input[type="text"] {
   }
 }
 
-
-#video-title {
-  margin-right: 15px;
-}
-
-#video-player {
-  margin-top:10px;
-  width:100%;
-  height:480px;
-}
 #audio-player {
   margin-top:10px;
   width:100%;
@@ -505,6 +523,7 @@ a.btn.active {
 #audio-title {
   padding: 0 25px;
   font-size: 24px;
+  @include respond-to(720p) { font-size: 20px; padding: 0 25px;}
 }
 #audio-title:before {
   content:"Currently Playing: ";
@@ -517,6 +536,7 @@ img.logo {
   position: absolute;
   top:7px;
   left:10px;
+  @include respond-to(720p) { display: none;}
 }
 
 @keyframes fadein {

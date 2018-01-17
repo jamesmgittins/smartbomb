@@ -9,8 +9,8 @@ var Constants = {
   itemsInCarousel: 11,
   minCarouselTime: 80,
   testLiveStream: false,
-  freeApi:"",
-  debugKey:"aduj327heda8dj!",
+  freeApi:"32874h0esfnioand9032",
+  debugKey:"asiodun92309joad",
   uiNavigationDelay : 1000
 };
 
@@ -52,7 +52,7 @@ function renderShows(callback) {
 
   if (currentMenuOption == "live") {
     owlShowInit(renderShow("live", "Live Streams", false, 0), 1);
-
+    
     $("#shows").show();
     $(".show[data-show-id='live']").addClass("selected");
     if (wasActive) {
@@ -65,17 +65,17 @@ function renderShows(callback) {
     videoCategories.forEach(function (show) {
       htmlString += renderShow(show.id, show.name, true, owlIndex++);
     });
-
+    
     owlShowInit(htmlString);
     $("#shows").show();
     $(".show[data-show-id='" + currentCategory + "']").addClass("selected");
     if (wasActive) {
       $(".show[data-show-id='" + currentCategory + "']").addClass("active");
     }
-
+    
     owlShowJumpTo($(".show.selected").data("owl-index"));
-
-
+    
+    
     $("#shows .show").click(function (event) {
       selectShow($(this).data("show-id"), $(this).hasClass("category"));
       owlShowGoTo($(this).data("owl-index"));
@@ -143,7 +143,7 @@ function selectShow(show, isCategory) {
     if (showSelectTimeout)
       clearTimeout(showSelectTimeout);
 
-    showSelectTimeout = setTimeout(function () {
+    showSelectTimeout = setTimeout(function () { 
       getVideos();
     }, Constants.uiNavigationDelay);
   }
@@ -240,7 +240,7 @@ var readyToMove = true;
 function nextVideo() {
   if (!readyToMove)
     return;
-
+  
   if (currentMenuOption == "podcasts") {
     if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex + 1]) {
       readyToMove = false;
@@ -254,14 +254,14 @@ function nextVideo() {
       selectVideo(videos[currentlyPlayingVideo.arrayIndex + 1].id, currentlyPlayingVideo.owlIndex + 1 > Constants.itemsInCarousel - 1 ? 0 : currentlyPlayingVideo.owlIndex + 1);
       $("#videos .video").removeClass("active");
       $("." + currentlyPlayingVideo.cssId).addClass("active");
-    }
+    } 
   }
 }
 
 function previousVideo() {
   if (!readyToMove)
     return;
-
+  
   if (currentMenuOption == "podcasts") {
     if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex - 1]) {
       readyToMove = false;
