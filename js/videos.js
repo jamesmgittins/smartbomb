@@ -197,6 +197,12 @@ function getLiveStream(callback) {
       }
       if (callback)
         callback();
+    }, function(data){
+      liveVideo = undefined;
+        $("#live-menu-option").hide();
+
+      if (callback)
+        callback();
     });
   liveTimeout = setTimeout(function () {
     getLiveStream();
@@ -219,11 +225,9 @@ function getVideos() {
 
 function updateVideoTime() {
 
-  // jsVideo.ready(function () {
-    if (currentlyPlayingVideo.id != "live") {
-      GbEndpoints.saveTime(currentlyPlayingVideo.id, jsVideo.currentTime, function(data){
-        // dont really need to do anything
-      });
-    }
-  // });
+  if (currentlyPlayingVideo.id != "live" && jsVideo.currentTime) {
+    GbEndpoints.saveTime(currentlyPlayingVideo.id, Math.round(jsVideo.currentTime), function(data){
+      // dont really need to do anything
+    });
+  }
 }

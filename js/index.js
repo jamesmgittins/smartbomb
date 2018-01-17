@@ -10,7 +10,8 @@ var Constants = {
   minCarouselTime: 80,
   testLiveStream: false,
   freeApi:"",
-  debugKey:"asdh7238ahd9aj"
+  debugKey:"aduj327heda8dj!",
+  uiNavigationDelay : 1000
 };
 
 var currentMenuOption = "videos";
@@ -47,7 +48,7 @@ var jsVideo, jsAudio;
 function renderShows(callback) {
   var htmlString = "";
 
-  var wasActive = $("#shows .active").length > 0;
+  var wasActive = $("#shows .show.active").length > 0;
 
   if (currentMenuOption == "live") {
     owlShowInit(renderShow("live", "Live Streams", false, 0), 1);
@@ -142,7 +143,9 @@ function selectShow(show, isCategory) {
     if (showSelectTimeout)
       clearTimeout(showSelectTimeout);
 
-    showSelectTimeout = setTimeout(function () { getVideos(); }, 800);
+    showSelectTimeout = setTimeout(function () {
+      getVideos();
+    }, Constants.uiNavigationDelay);
   }
 
 }
@@ -206,7 +209,7 @@ function selectVideo(id, owlIndexGoTo) {
       $("#media-view").html(currentlyPlayingVideo.getMediaInformationHtml());
       setButtonsMouseOverActions();
     }
-  }, 500);
+  }, Constants.uiNavigationDelay);
 
   getMoreVideos();
 
@@ -326,80 +329,57 @@ function playVideo(quality) {
   if ($("#video-container").is(":visible"))
     return false;
 
-  $("#video-player").show();
+  $("#video-container").html('<video id="video-player" controls autoplay preload="metadata" poster="standby.jpg"></video>');
 
   stopPodcast();
 
-  if (currentlyPlayingVideo.live) {
-    jsVideo.setSrc({ src: currentlyPlayingVideo.stream + "?api_key=" + regToken, type: "application/x-mpegURL" });
-  } else {
-    var src;
-    if (currentlyPlayingVideo.youtube)
-      src = {
-        src: "https://www.youtube.com/embed/" + currentlyPlayingVideo.youtube,
-        type: "video/youtube"
-      };
-    if (currentlyPlayingVideo.hdUrl && quality == "hd" || !src)
-      src = {
-        src: currentlyPlayingVideo.hdUrl + "?api_key=" + regToken,
-        type: "video/mp4"
-      };
-    if (currentlyPlayingVideo.highUrl && quality == "high" || !src)
-      src = {
-        src: currentlyPlayingVideo.highUrl + "?api_key=" + regToken,
-        type: "video/mp4"
-      };
-    if (currentlyPlayingVideo.lowUrl && quality == "low" || !src)
-      src = {
-        src: currentlyPlayingVideo.lowUrl + "?api_key=" + regToken,
-        type: "video/mp4"
-      };
-    jsVideo.setSrc(src);
-  }
+  var youtubeOptions = {};
+  if (quality == "youtube" && currentlyPlayingVideo.savedTime)
+    youtubeOptions.start = Math.round(currentlyPlayingVideo.savedTime);
 
-  // jsVideo.ready(function () {
-
+  mediaElementVideoSetup(function(){
     $("#video-container").show();
-    // jsVideo.poster("standby.jpg");
+    jsVideo.setSrc(currentlyPlayingVideo.getSrc(quality))
     jsVideo.play();
 
     if (!currentlyPlayingVideo.live) {
       if (currentlyPlayingVideo.savedTime) {
-        jsVideo.currentTime = currentlyPlayingVideo.savedTime;
-      } else {
-        jsVideo.currentTime = 0;
+        jsVideo.setCurrentTime(currentlyPlayingVideo.savedTime);
       }
       timerInterval = setInterval(updateVideoTime, 20000);
     }
 
+    showControls();
+    createTransportControls(currentlyPlayingVideo.name);
 
-  // });
+    setTimeout(function(){
+      if ($("iframe").length > 0)
+        $("iframe")[0].contentDocument.addEventListener('mousemove', function (event) {
+          showControls();
+        }.bind(this));
+    },5000);
 
-  // jsVideo.requestFullscreen();
-  // jsVideo.enterFullScreen();
+  }, youtubeOptions);
 
 }
 
 function closeVideo() {
   clearInterval(timerInterval);
 
-  // jsVideo.ready(function () {
-    jsVideo.pause();
-    if (currentlyPlayingVideo && !currentlyPlayingVideo.live) {
-      corsRequest("https://www.giantbomb.com/api/video/save-time/?api_key=" + regToken + "&video_id=" + currentlyPlayingVideo.id + "&time_to_save=" + jsVideo.currentTime, function (data) {
-        // console.log(data);
-      });
-      videos.forEach(function (video) {
-        if (video.id == currentlyPlayingVideo.id)
-          video.savedTime = jsVideo.currentTime;
-      });
-      $("." + currentlyPlayingVideo.cssId).replaceWith(currentlyPlayingVideo.getHtml("left:" + $("." + currentlyPlayingVideo.cssId).css("left")));
-      $("." + currentlyPlayingVideo.cssId).addClass("selected");
-      setVideoClicks();
-    }
-    $("#video-container").hide();
-  // });
-
+  jsVideo.pause();
+  if (currentlyPlayingVideo && !currentlyPlayingVideo.live) {
+    GbEndpoints.saveTime(currentlyPlayingVideo.id, jsVideo.currentTime, function(data){
+      // console.log(data);
+    });
+    videos.forEach(function (video) {
+      if (video.id == currentlyPlayingVideo.id)
+        video.savedTime = Math.round(jsVideo.currentTime);
+    });
+    $("." + currentlyPlayingVideo.cssId).replaceWith(currentlyPlayingVideo.getHtml("left:" + $("." + currentlyPlayingVideo.cssId).css("left")));
+    $("." + currentlyPlayingVideo.cssId).addClass("selected");
+    setVideoClicks();
+  }
+  $("#video-container").hide();
 }
 
 function registerApp() {
@@ -452,6 +432,6 @@ $(function () {
   setKeyHandler();
   setTopMenuClicks();
   setTopMenuMouseOverActions();
-  jsVideoInitialSetup();
+  mediaElementSetup();
   owlInit();
 });

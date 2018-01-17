@@ -23,6 +23,13 @@ GbPodcast.prototype.getMediaInformationHtml = function() {
   return "<h1>" + this.title + "</h1><p>" + this.description + "</p>";
 }
 
+GbPodcast.prototype.getSrc = function() {
+  return {
+    src:currentlyPlayingPodcast.url,
+    type:"audio/mp3"
+  };
+}
+
 var podcastShows = [
   {
     name:"Giant Bombcast",
@@ -150,7 +157,7 @@ function selectPodcast(id) {
       $(".spinner").hide();
     });
 
-  }, 800);
+  }, Constants.uiNavigationDelay);
 }
 
 function updateHiddenPodcasts() {
@@ -197,11 +204,11 @@ function selectPodcastEpisode(id, owlIndexToGoTo) {
 
   videoInformationTimeout = setTimeout(function(){
     if (currentMenuOption == "podcasts") {
-      $(".play-buttons").html('<a class="btn play" onclick="playButton()" href="javascript:void(0)">&#9654; mp3</a>');
+      $(".play-buttons").html('<a class="btn play" onclick="playButton()" href="javascript:void(0)"><span class="fa fa-play"></span> MP3</a>');
       $("#media-view").html(currentlyPlayingPodcast.getMediaInformationHtml());
       setButtonsMouseOverActions();
     }
-  },500);
+  }, Constants.uiNavigationDelay);
   updateHiddenPodcasts();
 }
 
@@ -209,10 +216,7 @@ function playpodcast() {
   if ($("#video-container").is(":visible"))
     return false;
 
-  jsAudio.setSrc({
-    src:currentlyPlayingPodcast.url,
-    type:"audio/mp3"
-  });
+  jsAudio.setSrc(currentlyPlayingPodcast.getSrc());
 
   $("#audio-container").show();
   $("#audio-title").text(currentlyPlayingPodcast.title);

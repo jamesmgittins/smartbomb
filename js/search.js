@@ -22,7 +22,7 @@ function performSearch() {
 
 function renderSearchHistory(callback) {
 
-  var wasActive = $("#shows .active").length > 0;
+  var wasActive = $("#shows .show.active").length > 0;
   var owlIndex = 0;
   var htmlString = "";
   htmlString += renderShow(newSearchOption.id, newSearchOption.label, false, owlIndex++);
@@ -93,7 +93,7 @@ function selectSearchHistory(searchId) {
     if (showSelectTimeout)
       clearTimeout(showSelectTimeout);
 
-    showSelectTimeout = setTimeout(function () { getSearchResults(); }, 800);
+    showSelectTimeout = setTimeout(function () { getSearchResults(); }, Constants.uiNavigationDelay);
   }
 }
 

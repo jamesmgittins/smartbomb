@@ -91,7 +91,7 @@ function owlShowInit(html, items) {
   $("#shows").addClass("owl-carousel").owlCarousel({
     items: items || 10,
     center:true,
-    loop: items != 1,
+    loop: !items || items > 3,
     margin:0,
     autoWidth:true,
     mouseDrag:false,
@@ -171,72 +171,29 @@ function owlResetPositions() {
   $('#videos').trigger('to.owl.carousel', [0,0,true]);
 }
 
-function videoJsSetup() {
-  jsVideo = videojs("video-player", {
-    controls:true,
-    autoplay:false,
-    preload:'none',
-    playbackRates:[1,1.25,1.5,2],
-    children:['controlBar'],
-    controlBar: {
-      children: [
-        "playToggle",
-        "progressControl",
-        "currentTimeDisplay",
-        "timeDivider",
-        "durationDisplay"
-      ]
-    },
-    techOrder : ["youtube"],
-    youtube: { autoplay: 1, enablejsapi:1, iv_load_policy:3, rel : 0 }
-  });
-  jsVideo.player().on("error", function(e){
-    e.stopImmediatePropagation();
-    var error = this.player().error();
-    $(".media-error").text(error.message);
-    closeVideo();
-  })
-  jsAudio = videojs("audio-player", {
-    controls:true,
-    autoplay:false,
-    preload:'auto',
-    playbackRates:[1,1.25,1.5,2],
-    children:['controlBar'],
-    controlBar: {
-      children: [
-        "playToggle",
-        "progressControl",
-        "currentTimeDisplay",
-        "timeDivider",
-        "durationDisplay"
-      ]
-    }
-  });
-  jsAudio.player().on("error", function(e){
-    e.stopImmediatePropagation();
-    var error = this.player().error();
-    $(".media-error").text(error.message);
-    stopPodcast();
-  })
-}
-
-function mediaElementSetup() {
+function mediaElementVideoSetup(onSuccess, youtube) {
   $('#video-player').on('error', function(e) {
     console.log(e);
   });
   $('#video-player').mediaelementplayer({
     videoWidth: '100%',
     videoHeight: '100%',
-    features: ['playpause','progress','current','duration'],
+    features: ['progress','current','duration'],
+    alwaysShowControls : true,
     startVolume : 1,
     enableKeyboard : false,
+    youtube : youtube || {},
 		//pluginPath: "/path/to/shims/",
 	// When using jQuery's `mediaelementplayer`, an `instance` argument
 	// is available in the `success` callback
 		success: function(mediaElement, originalNode, instance) {
-			jsVideo = mediaElement;
+      jsVideo = mediaElement;
+      onSuccess();
 		}
   });
+}
+
+function mediaElementSetup() {
   
   $('#audio-player').mediaelementplayer({
     audioWidth: '100%',
@@ -251,8 +208,4 @@ function mediaElementSetup() {
 			jsAudio = mediaElement;
 		}
 	});
-}
-
-function jsVideoInitialSetup() {
-  mediaElementSetup();
 }

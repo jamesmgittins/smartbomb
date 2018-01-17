@@ -71,20 +71,56 @@ GbVideo.prototype.getPlayButtons = function() {
   var htmlString = "";
 
   if (this.youtube) {
-    htmlString += '<a class="btn play" onclick="playButton(\'youtube\')" href="javascript:void(0)">&#9654; Youtube</a>';
+    htmlString += '<a class="btn play" onclick="playButton(\'youtube\')" href="javascript:void(0)"><span class="fa fa-play"></span> Youtube</a>';
   }
-
   if (this.hdUrl) {
-    htmlString += '<a class="btn play" onclick="playButton(\'hd\')" href="javascript:void(0)">&#9654; HD</a>';
+    htmlString += '<a class="btn play" onclick="playButton(\'hd\')" href="javascript:void(0)"><span class="fa fa-play"></span> HD</a>';
   }
   if (this.highUrl) {
-    htmlString += '<a class="btn play" onclick="playButton(\'high\')" href="javascript:void(0)">&#9654; High</a>';
+    htmlString += '<a class="btn play" onclick="playButton(\'high\')" href="javascript:void(0)"><span class="fa fa-play"></span> High</a>';
   }
   if (this.lowUrl) {
-    htmlString += '<a class="btn play" onclick="playButton(\'low\')" href="javascript:void(0)">&#9654; Low</a>';
+    htmlString += '<a class="btn play" onclick="playButton(\'low\')" href="javascript:void(0)"><span class="fa fa-play"></span> Low</a>';
   }
   if (this.live) {
     htmlString += '<a class="btn play" onclick="playButton()" href="javascript:void(0)">Watch Live</a>';
   }
   return htmlString;
+};
+
+
+GbVideo.prototype.getSrc = function(quality) {
+  if (this.live) {
+    return { src: this.stream + "?api_key=" + regToken, type: "application/x-mpegURL" };
+  } else {
+    var options = {
+      option : {}
+    };
+    if (this.savedTime) {
+      options.option.transmission = {};
+      options.option.transmission.playTime = {};
+      options.option.transmission.start = Math.round(this.savedTime  * 1000);
+    }
+    var src;
+    if (this.youtube && quality == "youtube")
+      return {
+        src: "https://www.youtube.com/embed/" + this.youtube + "?start=" + Math.round(this.savedTime),
+        type: "video/youtube"
+      };
+    if (this.hdUrl && quality == "hd")
+      return {
+        src: this.hdUrl + "?api_key=" + regToken,
+        type: "video/mp4;mediaOption=" + escape(JSON.stringify(options))
+      };
+    if (this.highUrl && quality == "high")
+      return {
+        src: this.highUrl + "?api_key=" + regToken,
+        type: "video/mp4;mediaOption=" + escape(JSON.stringify(options))
+      };
+    if (this.lowUrl && quality == "low")
+      return {
+        src: this.lowUrl + "?api_key=" + regToken,
+        type: "video/mp4;mediaOption=" + escape(JSON.stringify(options))
+      };
+  }
 };

@@ -14,12 +14,12 @@ var GbEndpoints = {
     videosShows: "https://www.giantbomb.com/api/video_shows/"
   },
 
-  currentLive : function (callback) {
+  currentLive : function (callback, error) {
     corsRequest(GbEndpoints.urls.currentLive + "?api_key=" + regToken, function (data) {
       if (data.success) {
         callback(data);
       } else {
-        // handle error
+        error(data);
       }
     }, true);
   },

@@ -10,6 +10,13 @@ var keyCodes = [
   { code: "19", value: "pause" }
 ];
 
+var uiLevels = {
+  topMenu : 0,
+  navMenu : 1,
+  videos : 2,
+  buttons : 3
+}
+
 var currentUILevel = 0;
 var cursorVisible = false;
 
@@ -36,7 +43,7 @@ function setKeyHandler() {
             break;
 
           case "select":
-            select();
+            selectButton();
             break;
 
           case "back":
@@ -66,30 +73,20 @@ function setKeyHandler() {
   };
   document.addEventListener("cursorStateChange", function (event) {
     cursorVisible = event.detail.visibility;
-    
+
     if ($("#video-container").is(":visible")) {
-      if (cursorVisible) {
-        $("#video-container .mejs__controls").stop();
-        $("#video-container .mejs__controls").removeClass("mejs__offscreen").css("opacity",1);
-      } else {
-        showControls();
-      }
+      showControls();
     } else {
       if (cursorVisible) {
-        $(".active").removeClass("active");
+        removeCurrentActiveUiClass();
       } else {
         changeUILevel();
       }
     }
   }, false);
   document.addEventListener("mousemove", function (event) {
-    cursorVisible = event.detail.visibility;
-    
-    if (cursorVisible && $("#video-container").is(":visible")) {
-      if (cursorVisible) {
-        $("#video-container .mejs__controls").stop();
-        $("#video-container .mejs__controls").removeClass("mejs__offscreen").css("opacity",1);
-      }
+    if ($("#video-container").is(":visible")) {
+      showControls();
     }
   }, false);
 
@@ -109,51 +106,61 @@ function playPause() {
 }
 
 function videoSkip(seconds) {
-  // jsVideo.ready(function () {
-  //   jsVideo.currentTime(jsVideo.currentTime() + 10);
-  //   jsVideo.userActive(true);
-  // });
-  jsVideo.currentTime += seconds;
+  jsVideo.setCurrentTime(jsVideo.getCurrentTime() + seconds);
   $(".mejs__currenttime").text(toHHMMSS(jsVideo.currentTime));
   showControls();
 }
+var videoControlsTimesout;
 
 function showControls() {
-  $("#video-container .mejs__controls").stop();
-  $("#video-container .mejs__controls").removeClass("mejs__offscreen").css("opacity",1).animate({opacity:0}, 5000, function(){
-    $("#video-container .mejs__controls").addClass("mejs__offscreen");
-  });
-  // $(".mejs__controls").removeClass("mejs__offscreen");
-  // $(".mejs__controls").addClass("mejs__offscreen");
+  if (videoControlsTimesout)
+    clearTimeout(videoControlsTimesout);
+  
+  $("#video-container .mejs__controls").removeClass("fadeout");
+  videoControlsTimesout = setTimeout(function(){
+    if (jsVideo && !jsVideo.paused)
+      $("#video-container .mejs__controls").addClass("fadeout");
+  }, 5000);
+}
+
+function removeCurrentActiveUiClass() {
+  $("#top-menu .active").removeClass("active");
+  $("#shows .show.active").removeClass("active");
+  $("#shows .podcast.active").removeClass("active");
+  $("#videos .video.active").removeClass("active");
+  $("#videos .podcast.active").removeClass("active");
+  $(".btn.active").removeClass("active");
 }
 
 function changeUILevel() {
   if ($("#enter-code").is(":visible") || $("#search-form").is(":visible"))
     return;
-  $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
   switch (currentUILevel) {
-    case 0:
+    case uiLevels.topMenu:
       $("#top-menu .selected").addClass("active");
       break;
 
-    case 1:
+    case uiLevels.navMenu:
       $("#shows .selected").addClass("active");
       break;
 
-    case 2:
-      if (currentMenuOption == "search" && ! currentSearch) {
-        currentUILevel = 1;
+    case uiLevels.videos:
+      if ((currentMenuOption == "search" && !currentSearch) || !$("#videos").is(":visible")) {
+        currentUILevel = uiLevels.navMenu;
         $("#shows .selected").addClass("active");
       } else
         $("#videos .selected").addClass("active");
       break;
 
-    case 3:
-      if (currentMenuOption == "search" && ! currentSearch) {
-        currentUILevel = 1;
+    case uiLevels.buttons:
+      if (currentMenuOption == "search" && !currentSearch) {
+        currentUILevel = uiLevels.navMenu;
         $("#shows .selected").addClass("active");
       } else {
-        if ($(".btn.play").length > 2) {
+        if ($(".btn.play").length == 0) {
+
+        } else if ($(".btn.play").length > 2) {
           $($(".btn.play").get(1)).addClass("active");
         } else {
           $(".btn.play").first().addClass("active");
@@ -276,7 +283,7 @@ function right() {
 
 
 
-function select() {
+function selectButton() {
   if (!cursorVisible && !$("#search-form").is(":visible"))
     if ($("#video-container").is(":visible")) {
 
@@ -289,13 +296,13 @@ function dummyVideo() {
   return "<div class='video disabled'></div>"
 }
 
-
+var topMenuTimeout;
 
 function setTopMenuClicks() {
   $("#top-menu .menu-option").click(function () {
     if (!requestInProgress) {
       var clicked = $(this).data("menu-option");
-      
+
       if (clicked == currentMenuOption)
         return;
 
@@ -306,14 +313,21 @@ function setTopMenuClicks() {
       if (videoInformationTimeout)
         clearTimeout(videoInformationTimeout);
 
-      if (clicked == "podcasts")
-        renderPodcasts();
-      else if (clicked == "search")
-        renderSearchHistory();
-      else {
-        currentlyPlayingVideo = undefined;
-        renderShows(getVideos);
-      }
+      if (topMenuTimeout)
+        clearTimeout(topMenuTimeout);
+
+      $("#shows *").fadeOut();
+
+      topMenuTimeout = setTimeout(function () {
+        if (clicked == "podcasts")
+          renderPodcasts();
+        else if (clicked == "search")
+          renderSearchHistory();
+        else {
+          currentlyPlayingVideo = undefined;
+          renderShows(getVideos);
+        }
+      }, Constants.uiNavigationDelay);
 
       $("#top-menu .menu-option").removeClass("selected");
       $("#top-menu .menu-option[data-menu-option='" + clicked + "']").addClass("selected");
@@ -324,47 +338,47 @@ function setTopMenuClicks() {
 
 function setTopMenuMouseOverActions() {
   $("#top-menu .menu-option").off("mouseenter mouseleave").hover(function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass()
     $(this).addClass("active");
     currentUILevel = 0;
   }, function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
   });
 }
 
 function setNavBarMouseOverActions() {
   $("#shows div.show, #shows div.podcast").off("mouseenter mouseleave").hover(function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass()
     $(this).addClass("active");
     currentUILevel = 1;
   }, function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
   });
 }
 
 function setVideoMouseOverActions() {
   $("#videos .podcast, #videos .video").off("mouseenter mouseleave").hover(function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
     $(this).addClass("active");
     currentUILevel = 2;
   }, function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
   });
 }
 
 function setButtonsMouseOverActions() {
   $(".play-buttons .btn").off("mouseenter mouseleave").hover(function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
     $(this).addClass("active");
     currentUILevel = 3;
   }, function () {
-    $(".active").removeClass("active");
+    removeCurrentActiveUiClass();
   });
 }
 
 
 function setVideoClicks() {
-  $("#videos .video:not(.disabled").off("click").on("click", function () {
+  $("#videos .video:not(.disabled)").off("click").on("click", function () {
     // console.log("video clicked");
     var id = $(this).data("video-id");
     selectVideo(id, $(this).parent().data("owl-index"));
@@ -376,7 +390,6 @@ function hideMediaView() {
   $("#no-results").hide();
   $(".play-buttons").html("");
   $("#media-view").html("");
-  $(".media-error").text("");
   fadeoutBackgroundImage();
 }
 
@@ -409,7 +422,7 @@ function nextShow() {
   readyToSelectAShow = false;
 
   var max = 0;
-  $("#shows [data-owl-index]").each(function(){
+  $("#shows [data-owl-index]").each(function () {
     if ($(this).data("owl-index") > max)
       max = $(this).data("owl-index");
   })
@@ -429,7 +442,7 @@ function previousShow() {
   readyToSelectAShow = false;
 
   var max = 0;
-  $("#shows [data-owl-index]").each(function(){
+  $("#shows [data-owl-index]").each(function () {
     if ($(this).data("owl-index") > max)
       max = $(this).data("owl-index");
   })
@@ -440,4 +453,19 @@ function previousShow() {
 
   $("#shows [data-owl-index]").removeClass("active");
   $("#shows [data-owl-index='" + owlIndex + "']").addClass("active").first().click();
+}
+
+function createTransportControls(title) {
+  var htmlString = "<div class='transport'>" +
+                    "<span class='fa fa-fast-backward'></span>" +
+                    "<span class='fa fa-step-backward'></span>" +
+                    "<span class='fa fa-stop'></span>" +
+                    "<span class='fa fa-pause fa-play'></span>" +
+                    "<span class='fa fa-step-forward'></span>" +
+                    "<span class='fa fa-fast-forward'></span>" +
+                    "<span class='title'><span>" + title + "</span></span>" +
+                  "</div>";
+
+
+  $("#video-container .mejs__controls").prepend(htmlString);
 }
