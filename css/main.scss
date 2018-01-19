@@ -292,6 +292,26 @@ input[type="text"] {
   width: 100%;
   height: 100%;
 
+  .mejs__controls.fadeout {
+    opacity: 0;
+    -webkit-animation: videoFadeout ease-in 1;
+    animation: videoFadeout ease-in 1;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+  }
+
+  .mejs__overlay-error {
+    img {
+      width: 100%;
+    }
+    .mejs__cannotplay {
+      font-size: 50px;
+    }
+  }
+}
+
+#video-container , #audio-container {
+
   .mejs__controls {
     height:130px;
     flex-wrap: wrap;
@@ -314,9 +334,12 @@ input[type="text"] {
         margin-right: 10px;
         flex: 0 0 auto;
 
+        &.fa {
+          cursor: pointer;
+        }
+
         &.active {
-          background-color: #000;
-          color: $focus-color;
+          background-color: $focus-color;
         }
 
         &.title {
@@ -344,11 +367,39 @@ input[type="text"] {
       padding-top:0;
       margin-left: 0;
 
+      .mejs__broadcast {
+        font-size: 32px;
+      }
+
       .mejs__time-total {
         margin:0;
-      }
-      .mejs__time-float {
-        z-index: 100;
+        height:40px;
+
+        .mejs__time-loaded, .mejs__time-current, .mejs__time-hovered, .mejs__time-buffering {
+          height:100%;
+          font-size: 24px;
+        }
+        
+        .mejs__time-handle{
+          .mejs__time-handle-content {
+            display: none;
+          }
+        }
+        
+        .mejs__time-float {
+          height:50px;
+          width: 100px;
+          z-index: 100;
+    
+          .mejs__time-float-current {
+            top:15px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            font-size: 24px;
+            width: 100%;
+          }
+        }
       }
 
       .mejs__time-buffering, .mejs__time-current, .mejs__time-float, .mejs__time-float-current, .mejs__time-hovered, .mejs__time-loaded, .mejs__time-marker, .mejs__time-total {
@@ -364,28 +415,10 @@ input[type="text"] {
       height:40px;
       padding: 0 10px;
       line-height: 40px;
+      font-size: 24px;
+      font-weight: 400;
     }
   }
-
-  .mejs__controls.fadeout {
-    opacity: 0;
-    -webkit-animation: videoFadeout ease-in 1;
-    animation: videoFadeout ease-in 1;
-    -webkit-animation-duration: 2s;
-    animation-duration: 2s;
-  }
-
-  .mejs__overlay-error {
-    img {
-      width: 100%;
-    }
-    .mejs__cannotplay {
-      font-size: 50px;
-    }
-  }
-}
-
-#video-container , #audio-container {
 
   .mejs__container {
     font-family: $font-family;
@@ -395,48 +428,11 @@ input[type="text"] {
   .mejs__long-video .mejs__time-float {
     margin-left: -35px;
   }
-
-  .mejs__time {
-    font-size: 24px;
-    padding: 10px 6px 0;
-    font-weight: 400;
-  }
   
   .mejs__button {
     margin-top: -5px;
   }
-  
-  .mejs__time-total {
-    height:40px;
-    margin:-15px 0 0;
 
-    .mejs__time-loaded, .mejs__time-current, .mejs__time-hovered, .mejs__time-buffering {
-      height:100%;
-      font-size: 24px;
-    }
-    
-    .mejs__time-handle{
-      .mejs__time-handle-content {
-        display: none;
-      }
-    }
-    
-    .mejs__time-float {
-      height:50px;
-      width: 100px;
-
-      
-    
-      .mejs__time-float-current {
-        top:15px;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        transform: translateX(-50%);
-        font-size: 24px;
-        width: 100%;
-      }
-    }
-  }
 }
 
 #audio-player {
@@ -537,6 +533,44 @@ img.logo {
   top:7px;
   left:10px;
   @include respond-to(720p) { display: none;}
+}
+
+#live-menu-option {
+  a {
+    position: relative;
+
+    span {
+      -webkit-animation: liveAnimation 4s linear infinite;
+      animation: liveAnimation 4s linear infinite;
+
+      &:last-child {
+        opacity: 0;
+        -webkit-animation-delay: 2s;
+        animation-delay: 2s;
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%,-50%);
+      }
+    }
+  }
+}
+
+@keyframes liveAnimation {
+  0% {opacity: 0;}
+  5% {opacity: 1;}
+  45% {opacity: 1;}
+  50% {opacity: 0;}
+  100% {opacity: 0;}
+}
+
+@-webkit-keyframes liveAnimation {
+  0% {opacity: 0;}
+  5% {opacity: 1;}
+  45% {opacity: 1;}
+  50% {opacity: 0;}
+  100% {opacity: 0;}
 }
 
 @keyframes fadein {

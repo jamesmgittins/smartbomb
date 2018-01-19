@@ -114,27 +114,11 @@ function getVideoShows(callback) {
     callback();
     return;
   }
-  if (GbCache.getShows().length > 0) {
-    videoShows = GbCache.getShows();
+  GbEndpoints.videoShows(function (data) {
+    
+    videoShows = data.results;
     callback();
-    setTimeout(function () {
-      GbEndpoints.videoShows(function (data) {
-        if (!arrayEquals(videoShows, data.results)) {
-          videoShows = data.results;
-          GbCache.saveShows(videoShows);
-          if (currentMenuOption == "shows")
-            renderShows();
-        }
-      })
-    }, 10000);
-  } else {
-    GbEndpoints.videoShows(function (data) {
-      
-      videoShows = data.results;
-      GbCache.saveShows(videoShows);
-      callback();
-    })
-  }
+  });
 }
 
 function getVideoCategories(callback) {
@@ -200,7 +184,6 @@ function getLiveStream(callback) {
     }, function(data){
       liveVideo = undefined;
         $("#live-menu-option").hide();
-
       if (callback)
         callback();
     });

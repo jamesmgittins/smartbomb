@@ -382,82 +382,6 @@ input[type="text"] {
   height: 100%;
 }
 
-#video-container .mejs__controls {
-  height: 130px;
-  flex-wrap: wrap;
-}
-
-#video-container .mejs__controls .transport {
-  display: none;
-  height: 70px;
-  width: 100%;
-  display: flex;
-  margin-bottom: 10px;
-}
-
-#video-container .mejs__controls .transport > span {
-  width: 70px;
-  height: 70px;
-  font-size: 50px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  text-align: center;
-  padding-top: 10px;
-  margin-right: 10px;
-  flex: 0 0 auto;
-}
-
-#video-container .mejs__controls .transport > span.active {
-  background-color: #000;
-  color: #cf0652;
-}
-
-#video-container .mejs__controls .transport > span.title {
-  font-size: 32px;
-  height: 70px;
-  display: block;
-  padding: 15px;
-  margin-right: 0;
-  min-width: 1px;
-  flex: 1 0 auto;
-}
-
-#video-container .mejs__controls .transport > span.title > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: block;
-}
-
-#video-container .mejs__controls .mejs__time-rail {
-  height: 50px;
-  padding-top: 0;
-  margin-left: 0;
-}
-
-#video-container .mejs__controls .mejs__time-rail .mejs__time-total {
-  margin: 0;
-}
-
-#video-container .mejs__controls .mejs__time-rail .mejs__time-float {
-  z-index: 100;
-}
-
-#video-container .mejs__controls .mejs__time-rail .mejs__time-buffering, #video-container .mejs__controls .mejs__time-rail .mejs__time-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-float, #video-container .mejs__controls .mejs__time-rail .mejs__time-float-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-hovered, #video-container .mejs__controls .mejs__time-rail .mejs__time-loaded, #video-container .mejs__controls .mejs__time-rail .mejs__time-marker, #video-container .mejs__controls .mejs__time-rail .mejs__time-total {
-  border-radius: 0;
-}
-
-#video-container .mejs__controls .mejs__time-rail .mejs__time-float-corner {
-  border-color: #000 transparent transparent;
-}
-
-#video-container .mejs__controls .mejs__time {
-  background-color: rgba(0, 0, 0, 0.3);
-  height: 40px;
-  padding: 0 10px;
-  line-height: 40px;
-}
-
 #video-container .mejs__controls.fadeout {
   opacity: 0;
   -webkit-animation: videoFadeout ease-in 1;
@@ -474,6 +398,112 @@ input[type="text"] {
   font-size: 50px;
 }
 
+#video-container .mejs__controls, #audio-container .mejs__controls {
+  height: 130px;
+  flex-wrap: wrap;
+}
+
+#video-container .mejs__controls .transport, #audio-container .mejs__controls .transport {
+  display: none;
+  height: 70px;
+  width: 100%;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+#video-container .mejs__controls .transport > span, #audio-container .mejs__controls .transport > span {
+  width: 70px;
+  height: 70px;
+  font-size: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: center;
+  padding-top: 10px;
+  margin-right: 10px;
+  flex: 0 0 auto;
+}
+
+#video-container .mejs__controls .transport > span.fa, #audio-container .mejs__controls .transport > span.fa {
+  cursor: pointer;
+}
+
+#video-container .mejs__controls .transport > span.active, #audio-container .mejs__controls .transport > span.active {
+  background-color: #cf0652;
+}
+
+#video-container .mejs__controls .transport > span.title, #audio-container .mejs__controls .transport > span.title {
+  font-size: 32px;
+  height: 70px;
+  display: block;
+  padding: 15px;
+  margin-right: 0;
+  min-width: 1px;
+  flex: 1 0 auto;
+}
+
+#video-container .mejs__controls .transport > span.title > span, #audio-container .mejs__controls .transport > span.title > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+#video-container .mejs__controls .mejs__time-rail, #audio-container .mejs__controls .mejs__time-rail {
+  height: 50px;
+  padding-top: 0;
+  margin-left: 0;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__broadcast, #audio-container .mejs__controls .mejs__time-rail .mejs__broadcast {
+  font-size: 32px;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-total, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total {
+  margin: 0;
+  height: 40px;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-loaded, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-hovered, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-buffering, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-loaded, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-current, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-hovered, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-buffering {
+  height: 100%;
+  font-size: 24px;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-handle .mejs__time-handle-content, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-handle .mejs__time-handle-content {
+  display: none;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-float, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-float {
+  height: 50px;
+  width: 100px;
+  z-index: 100;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-float .mejs__time-float-current, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-float .mejs__time-float-current {
+  top: 15px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  font-size: 24px;
+  width: 100%;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-buffering, #video-container .mejs__controls .mejs__time-rail .mejs__time-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-float, #video-container .mejs__controls .mejs__time-rail .mejs__time-float-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-hovered, #video-container .mejs__controls .mejs__time-rail .mejs__time-loaded, #video-container .mejs__controls .mejs__time-rail .mejs__time-marker, #video-container .mejs__controls .mejs__time-rail .mejs__time-total, #audio-container .mejs__controls .mejs__time-rail .mejs__time-buffering, #audio-container .mejs__controls .mejs__time-rail .mejs__time-current, #audio-container .mejs__controls .mejs__time-rail .mejs__time-float, #audio-container .mejs__controls .mejs__time-rail .mejs__time-float-current, #audio-container .mejs__controls .mejs__time-rail .mejs__time-hovered, #audio-container .mejs__controls .mejs__time-rail .mejs__time-loaded, #audio-container .mejs__controls .mejs__time-rail .mejs__time-marker, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total {
+  border-radius: 0;
+}
+
+#video-container .mejs__controls .mejs__time-rail .mejs__time-float-corner, #audio-container .mejs__controls .mejs__time-rail .mejs__time-float-corner {
+  border-color: #000 transparent transparent;
+}
+
+#video-container .mejs__controls .mejs__time, #audio-container .mejs__controls .mejs__time {
+  background-color: rgba(0, 0, 0, 0.3);
+  height: 40px;
+  padding: 0 10px;
+  line-height: 40px;
+  font-size: 24px;
+  font-weight: 400;
+}
+
 #video-container .mejs__container, #audio-container .mejs__container {
   font-family: "MuseoSans", sans-serif;
   min-width: 0 !important;
@@ -483,42 +513,8 @@ input[type="text"] {
   margin-left: -35px;
 }
 
-#video-container .mejs__time, #audio-container .mejs__time {
-  font-size: 24px;
-  padding: 10px 6px 0;
-  font-weight: 400;
-}
-
 #video-container .mejs__button, #audio-container .mejs__button {
   margin-top: -5px;
-}
-
-#video-container .mejs__time-total, #audio-container .mejs__time-total {
-  height: 40px;
-  margin: -15px 0 0;
-}
-
-#video-container .mejs__time-total .mejs__time-loaded, #video-container .mejs__time-total .mejs__time-current, #video-container .mejs__time-total .mejs__time-hovered, #video-container .mejs__time-total .mejs__time-buffering, #audio-container .mejs__time-total .mejs__time-loaded, #audio-container .mejs__time-total .mejs__time-current, #audio-container .mejs__time-total .mejs__time-hovered, #audio-container .mejs__time-total .mejs__time-buffering {
-  height: 100%;
-  font-size: 24px;
-}
-
-#video-container .mejs__time-total .mejs__time-handle .mejs__time-handle-content, #audio-container .mejs__time-total .mejs__time-handle .mejs__time-handle-content {
-  display: none;
-}
-
-#video-container .mejs__time-total .mejs__time-float, #audio-container .mejs__time-total .mejs__time-float {
-  height: 50px;
-  width: 100px;
-}
-
-#video-container .mejs__time-total .mejs__time-float .mejs__time-float-current, #audio-container .mejs__time-total .mejs__time-float .mejs__time-float-current {
-  top: 15px;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  transform: translateX(-50%);
-  font-size: 24px;
-  width: 100%;
 }
 
 #audio-player {
@@ -635,6 +631,62 @@ img.logo {
 @media only screen and (max-width: 1366px) {
   img.logo {
     display: none;
+  }
+}
+
+#live-menu-option a {
+  position: relative;
+}
+
+#live-menu-option a span {
+  -webkit-animation: liveAnimation 4s linear infinite;
+  animation: liveAnimation 4s linear infinite;
+}
+
+#live-menu-option a span:last-child {
+  opacity: 0;
+  -webkit-animation-delay: 2s;
+  animation-delay: 2s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+@keyframes liveAnimation {
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes liveAnimation {
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

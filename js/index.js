@@ -350,7 +350,7 @@ function playVideo(quality) {
     }
 
     showControls();
-    createTransportControls(currentlyPlayingVideo.name);
+    createTransportControls("#video-container", currentlyPlayingVideo.name);
 
     setTimeout(function(){
       if ($("iframe").length > 0)
@@ -368,9 +368,7 @@ function closeVideo() {
 
   jsVideo.pause();
   if (currentlyPlayingVideo && !currentlyPlayingVideo.live) {
-    GbEndpoints.saveTime(currentlyPlayingVideo.id, jsVideo.currentTime, function(data){
-      // console.log(data);
-    });
+    updateVideoTime();
     videos.forEach(function (video) {
       if (video.id == currentlyPlayingVideo.id)
         video.savedTime = Math.round(jsVideo.currentTime);
@@ -380,6 +378,11 @@ function closeVideo() {
     setVideoClicks();
   }
   $("#video-container").hide();
+
+  if (currentUILevel == uiLevels.transport) {
+    currentUILevel = uiLevels.buttons;
+    changeUILevel();
+  }
 }
 
 function registerApp() {
@@ -408,9 +411,11 @@ function registerApp() {
 }
 
 function startApplication() {
-  getVideoCategories(function () {
-    getLiveStream(function () {
-      renderShows(getVideos);
+  getLiveStream(function(){
+    getVideoCategories(function () {
+      getVideoShows(function () {
+        renderShows(getVideos);
+      });
     });
   });
   $("#top-menu").show();

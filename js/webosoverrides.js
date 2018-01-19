@@ -33,3 +33,16 @@ if (Constants.webOsMode) {
 		  });
 		}
 }
+
+
+// var tizenKeyCodes = [
+//   { code: "37", value: "left" },
+//   { code: "38", value: "up" },
+//   { code: "39", value: "right" },
+//   { code: "40", value: "down" },
+//   { code: "13", value: "select" },
+//   { code: "10009", value: "back" },
+//   { code: "415", value: "play" },
+//   { code: "19", value: "pause" },
+//   { code: "413", value: "stop" }
+// ]

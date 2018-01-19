@@ -14,7 +14,8 @@ var uiLevels = {
   topMenu : 0,
   navMenu : 1,
   videos : 2,
-  buttons : 3
+  buttons : 3,
+  transport : 4
 }
 
 var currentUILevel = 0;
@@ -75,7 +76,7 @@ function setKeyHandler() {
     cursorVisible = event.detail.visibility;
 
     if ($("#video-container").is(":visible")) {
-      showControls();
+
     } else {
       if (cursorVisible) {
         removeCurrentActiveUiClass();
@@ -105,11 +106,6 @@ function playPause() {
   showControls();
 }
 
-function videoSkip(seconds) {
-  jsVideo.setCurrentTime(jsVideo.getCurrentTime() + seconds);
-  $(".mejs__currenttime").text(toHHMMSS(jsVideo.currentTime));
-  showControls();
-}
 var videoControlsTimesout;
 
 function showControls() {
@@ -130,6 +126,7 @@ function removeCurrentActiveUiClass() {
   $("#videos .video.active").removeClass("active");
   $("#videos .podcast.active").removeClass("active");
   $(".btn.active").removeClass("active");
+  $(".transport span.active").removeClass("active");
 }
 
 function changeUILevel() {
@@ -167,6 +164,11 @@ function changeUILevel() {
         }
       }
       break;
+    case uiLevels.transport:
+      if ($("#audio-container").is(":visible")) {
+        $("#audio-container .transport span.fa-play").addClass("active");
+      }
+      break;
   }
 }
 
@@ -174,7 +176,7 @@ function up() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    videoSkip(60);
+    
   } else {
     if (currentUILevel > 0)
       currentUILevel--;
@@ -188,9 +190,9 @@ function down() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    videoSkip(-60);
+    
   } else {
-    if (currentUILevel < 3)
+    if (currentUILevel < 3 || (currentUILevel < 4 && $("#audio-container").is(":visible")))
       currentUILevel++;
 
     changeUILevel();
@@ -206,10 +208,10 @@ function left() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    videoSkip(-10);
+    previousTransportControl();
   } else {
     switch (currentUILevel) {
-      case 0:
+      case uiLevels.topMenu:
         var prev = $("#top-menu .active").prev();
         if (prev.length > 0 && $(prev).is(":visible") && !requestInProgress) {
           $("#top-menu .active").removeClass("active");
@@ -218,22 +220,25 @@ function left() {
         }
         break;
 
-      case 1:
+      case uiLevels.navMenu:
         if (!requestInProgress) {
           previousShow();
         }
         break;
 
-      case 2:
+      case uiLevels.videos:
         previousVideo();
         break;
 
-      case 3:
+      case uiLevels.buttons:
         var prev = $(".play-buttons a.active").prev();
         if (prev.length > 0) {
           $(".play-buttons a.active").removeClass("active");
           prev.addClass("active");
         }
+        break;
+      case uiLevels.transport:
+        previousTransportControl();
         break;
     }
   }
@@ -247,10 +252,10 @@ function right() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    videoSkip(10);
+    nextTransportControl();
   } else {
     switch (currentUILevel) {
-      case 0:
+      case uiLevels.topMenu:
         var next = $("#top-menu .active").next();
         if (next.length > 0 && !requestInProgress) {
           $("#top-menu .active").removeClass("active");
@@ -259,34 +264,39 @@ function right() {
         }
         break;
 
-      case 1:
+      case uiLevels.navMenu:
         if (!requestInProgress) {
           nextShow();
         }
         break;
 
-      case 2:
+      case uiLevels.videos:
         nextVideo();
         break;
 
-      case 3:
+      case uiLevels.buttons:
         var next = $(".play-buttons a.active").next();
         if (next.length > 0) {
           $(".play-buttons a.active").removeClass("active");
           next.addClass("active");
         }
         break;
+      case uiLevels.transport:
+        nextTransportControl();
+        break;
     }
   }
-
 }
-
 
 
 function selectButton() {
   if (!cursorVisible && !$("#search-form").is(":visible"))
     if ($("#video-container").is(":visible")) {
-
+      if ($(".transport span.active").length == 0) {
+        $(".transport span.fa-play").addClass("active");
+      } else {
+        $(".transport span.active").click();
+      }
     } else {
       $(".active").click();
     }
@@ -376,7 +386,6 @@ function setButtonsMouseOverActions() {
   });
 }
 
-
 function setVideoClicks() {
   $("#videos .video:not(.disabled)").off("click").on("click", function () {
     // console.log("video clicked");
@@ -455,17 +464,104 @@ function previousShow() {
   $("#shows [data-owl-index='" + owlIndex + "']").addClass("active").first().click();
 }
 
-function createTransportControls(title) {
+function transportControlClick(control) {
+  showControls();
+  if (control == "play-pause") {
+    if ($("#video-container").is(":visible")) {
+      if (jsVideo.paused) {
+        jsVideo.play();
+        $(".transport span.fa-play").addClass("fa-pause");
+      } else {
+        jsVideo.pause();
+        $(".transport span.fa-play").removeClass("fa-pause");
+      }
+    } else if ($("#audio-container").is(":visible")) {
+      if (jsAudio.paused) {
+        jsAudio.play();
+        $(".transport span.fa-play").addClass("fa-pause");
+      }
+      else {
+        jsAudio.pause();
+        $(".transport span.fa-play").removeClass("fa-pause");
+      } 
+    }
+    
+  } else if (control == "stop") {
+    if ($("#video-container").is(":visible")) {
+      closeVideo();
+    } else if ($("#audio-container").is(":visible"))  {
+      stopPodcast();
+    }
+  } else {
+    if ($("#video-container").is(":visible")) {
+      jsVideo.setCurrentTime(jsVideo.getCurrentTime() + control);
+    } else if ($("#audio-container").is(":visible"))  {
+      jsAudio.setCurrentTime(jsAudio.getCurrentTime() + control);
+    }
+  }
+}
+
+function previousTransportControl() {
+  showControls();
+  if ($(".transport span.active").length == 0) {
+    $(".transport span.fa-play").addClass("active");
+  } else {
+    var prev = $(".transport span.active").prev();
+
+    if (prev.length > 0) {
+      $(".transport span.active").removeClass("active");
+      prev.addClass("active");
+    }
+  }
+}
+
+function nextTransportControl() {
+  showControls();
+  if ($(".transport span.active").length == 0) {
+    $(".transport span.fa-play").addClass("active");
+  }
+
+  var next = $(".transport span.active").next();
+
+  if (next.length > 0 && !next.hasClass("title")) {
+    $(".transport span.active").removeClass("active");
+    next.addClass("active");
+  }
+}
+
+function createTransportControls(target, title) {
+
+  if ($(target+ " .mejs__controls .transport").length > 0) {
+    $(target+ " .mejs__controls .transport").remove();
+  }
+
+  if (!cursorVisible) {
+    removeCurrentActiveUiClass();
+    currentUILevel = uiLevels.transport;
+  }
+    
+
   var htmlString = "<div class='transport'>" +
-                    "<span class='fa fa-fast-backward'></span>" +
-                    "<span class='fa fa-step-backward'></span>" +
-                    "<span class='fa fa-stop'></span>" +
-                    "<span class='fa fa-pause fa-play'></span>" +
-                    "<span class='fa fa-step-forward'></span>" +
-                    "<span class='fa fa-fast-forward'></span>" +
+                    "<span class='fa fa-fast-backward' data-transport='-120'></span>" +
+                    "<span class='fa fa-step-backward' data-transport='-10'></span>" +
+                    "<span class='fa fa-stop' data-transport='stop'></span>" +
+                    "<span class='fa fa-pause fa-play " + (cursorVisible ? "" : "active") + "' data-transport='play-pause'></span>" +
+                    "<span class='fa fa-step-forward' data-transport='10'></span>" +
+                    "<span class='fa fa-fast-forward' data-transport='120'></span>" +
                     "<span class='title'><span>" + title + "</span></span>" +
                   "</div>";
 
+  $(target+ " .mejs__controls").prepend(htmlString);
 
-  $("#video-container .mejs__controls").prepend(htmlString);
+  $(target + " .transport > span.fa").hover(function(){
+    $(".transport > span.fa").removeClass("active");
+    $(this).addClass("active");
+    currentUILevel = uiLevels.transport;
+  },function(){
+    $(this).removeClass("active");
+  });
+
+  $(target + " .transport > span.fa").click(function(){
+    transportControlClick($(this).data('transport'));
+  });
 }

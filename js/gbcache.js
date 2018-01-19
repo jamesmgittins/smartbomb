@@ -24,21 +24,6 @@ var GbCache = {
     localStorage.setItem(GbCache.categoryKey, JSON.stringify(categories));
   },
 
-  showKey : "smartBombShows",
-
-  getShows : function() {
-    var shows = localStorage.getItem(GbCache.showKey);
-    if (shows)
-      return JSON.parse(shows);
-
-    return [];
-  },
-
-  saveShows : function(shows) {
-    localStorage.setItem(GbCache.showKey, JSON.stringify(shows));
-  },
-
-
   searchHistoryKey : "smartBombSearchHistory",
 
   getSearchHistory : function() {

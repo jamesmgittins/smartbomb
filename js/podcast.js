@@ -219,7 +219,7 @@ function playpodcast() {
   jsAudio.setSrc(currentlyPlayingPodcast.getSrc());
 
   $("#audio-container").show();
-  $("#audio-title").text(currentlyPlayingPodcast.title);
+  createTransportControls("#audio-container", currentlyPlayingPodcast.title);
   jsAudio.play();
 
 }
@@ -228,5 +228,10 @@ function stopPodcast() {
   
   jsAudio.pause();
   $("#audio-container").hide();
+
+  if (currentUILevel == uiLevels.transport) {
+    currentUILevel = uiLevels.buttons;
+    changeUILevel();
+  }
   
 }

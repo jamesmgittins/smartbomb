@@ -198,7 +198,7 @@ function mediaElementSetup() {
   $('#audio-player').mediaelementplayer({
     audioWidth: '100%',
     audioHeight : 50,
-    features: ['playpause','progress','current','duration'],
+    features: ['progress','current','duration'],
     startVolume : 1,
     enableKeyboard : false,
 		//pluginPath: "/path/to/shims/",

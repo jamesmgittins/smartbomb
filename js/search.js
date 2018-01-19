@@ -109,6 +109,12 @@ function getVideosForSearch(callback) {
 
   GbEndpoints.search(currentSearch, currentPage, function (data) {
     data.results.forEach(function (video) {
+      if (!video.saved_time && savedTimes) {
+        savedTimes.forEach(function(savedTime){
+          if (savedTime.videoId == video.id)
+            video.saved_time = savedTime.savedTime;
+        });
+      }
       videos.push(new GbVideo(video));
     });
     videos.total = data.number_of_total_results;
