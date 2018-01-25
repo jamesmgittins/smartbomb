@@ -80,18 +80,12 @@ function owlShowInit(html, items) {
 
   $("#shows").force_redraw();
 
-  for (var i = 0; i < $("#shows > div").length; i++) {
-    var width = Math.round($("#shows > div")[i].getBoundingClientRect().width);
-    width = width > 1000 ? 350 : width;
-    $($("#shows > div")[i]).css("width", width + "px");
-  }
-
   $("#shows > div").addClass("width-set");
   $("#shows > div").addClass('item');
   $("#shows").addClass("owl-carousel").owlCarousel({
     items: items || 10,
     center:true,
-    loop: !items || items > 3,
+    loop: !items || items > 4,
     margin:0,
     autoWidth:true,
     mouseDrag:false,
@@ -183,9 +177,6 @@ function mediaElementVideoSetup(onSuccess, youtube) {
     startVolume : 1,
     enableKeyboard : false,
     youtube : youtube || {},
-		//pluginPath: "/path/to/shims/",
-	// When using jQuery's `mediaelementplayer`, an `instance` argument
-	// is available in the `success` callback
 		success: function(mediaElement, originalNode, instance) {
       jsVideo = mediaElement;
       onSuccess();
@@ -201,9 +192,6 @@ function mediaElementSetup() {
     features: ['progress','current','duration'],
     startVolume : 1,
     enableKeyboard : false,
-		//pluginPath: "/path/to/shims/",
-	// When using jQuery's `mediaelementplayer`, an `instance` argument
-	// is available in the `success` callback
 		success: function(mediaElement, originalNode, instance) {
 			jsAudio = mediaElement;
 		}

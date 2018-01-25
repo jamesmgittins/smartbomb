@@ -13,6 +13,12 @@ body {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  body {
+    font-size: 60px;
+  }
+}
+
 h1 {
   font-size: 50px;
 }
@@ -20,6 +26,12 @@ h1 {
 @media only screen and (max-width: 1366px) {
   h1 {
     font-size: 30px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  h1 {
+    font-size: 100px;
   }
 }
 
@@ -32,6 +44,12 @@ h1 {
 @media only screen and (max-width: 1366px) {
   .play-buttons {
     margin-top: 20px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  .play-buttons {
+    margin-top: 60px;
   }
 }
 
@@ -55,6 +73,13 @@ a.btn.play {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  a.btn.play {
+    font-size: 100px;
+    padding: 20px 60px;
+  }
+}
+
 a, a:visited, a:hover {
   color: #69CDFF;
 }
@@ -66,6 +91,12 @@ a, a:visited, a:hover {
 input[type="text"] {
   font-size: 40px;
   border-bottom: 10px solid transparent;
+}
+
+@media only screen and (min-width: 3800px) {
+  input[type="text"] {
+    font-size: 80px;
+  }
 }
 
 .dialog {
@@ -91,8 +122,14 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  #top-menu {
+    font-size: 120px;
+  }
+}
+
 #top-menu .menu-option {
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px;
   display: inline-block;
   cursor: pointer;
   width: 15%;
@@ -101,7 +138,13 @@ input[type="text"] {
 
 @media only screen and (max-width: 1366px) {
   #top-menu .menu-option {
-    padding: 8px 16px 8px 16px;
+    padding: 8px 16px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #top-menu .menu-option {
+    padding: 20px 40px;
   }
 }
 
@@ -141,6 +184,13 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  #media-view {
+    height: 600px;
+    padding: 60px 200px 40px 200px;
+  }
+}
+
 #media-view * {
   -webkit-animation: fadeinfull ease-in 1;
   animation: fadeinfull ease-in 1;
@@ -155,6 +205,12 @@ input[type="text"] {
 @media only screen and (max-width: 1366px) {
   #media-view h1, #media-view p {
     margin: 10px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #media-view h1, #media-view p {
+    margin: 30px;
   }
 }
 
@@ -175,10 +231,16 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  .nav-bar {
+    height: 140px;
+  }
+}
+
 .nav-bar div.podcast,
 .nav-bar div.show {
   float: left;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px;
   cursor: pointer;
   text-align: center;
   font-size: 32px;
@@ -189,7 +251,15 @@ input[type="text"] {
   .nav-bar div.podcast,
   .nav-bar div.show {
     font-size: 24px;
-    padding: 6px 15px 6px 15px;
+    padding: 6px 15px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  .nav-bar div.podcast,
+  .nav-bar div.show {
+    font-size: 64px;
+    padding: 20px 40px;
   }
 }
 
@@ -208,6 +278,13 @@ input[type="text"] {
   .nav-bar div.podcast a,
   .nav-bar div.show a {
     line-height: 28px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  .nav-bar div.podcast a,
+  .nav-bar div.show a {
+    line-height: 100px;
   }
 }
 
@@ -251,6 +328,13 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled), #videos .podcast:not(.disabled) {
+    width: 900px;
+    height: 506px;
+  }
+}
+
 #videos .video:not(.disabled).active:before, #videos .podcast:not(.disabled).active:before {
   content: "";
   position: absolute;
@@ -261,6 +345,13 @@ input[type="text"] {
   background-color: #cf0652;
 }
 
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled).active:before, #videos .podcast:not(.disabled).active:before {
+    height: 30px;
+    top: -30px;
+  }
+}
+
 #videos .video:not(.disabled).active:after, #videos .podcast:not(.disabled).active:after {
   content: "";
   position: absolute;
@@ -269,6 +360,13 @@ input[type="text"] {
   bottom: -15px;
   left: 0;
   background-color: #cf0652;
+}
+
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled).active:after, #videos .podcast:not(.disabled).active:after {
+    height: 30px;
+    bottom: -30px;
+  }
 }
 
 #videos .video:not(.disabled) a, #videos .podcast:not(.disabled) a {
@@ -291,6 +389,12 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled) a, #videos .podcast:not(.disabled) a {
+    line-height: 100px;
+  }
+}
+
 #videos .video:not(.disabled) .video-time, #videos .podcast:not(.disabled) .video-time {
   position: absolute;
   left: 10px;
@@ -306,6 +410,15 @@ input[type="text"] {
     padding: 4px;
     left: 6px;
     bottom: 14px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled) .video-time, #videos .podcast:not(.disabled) .video-time {
+    font-size: 40px;
+    padding: 10px;
+    left: 20px;
+    bottom: 40px;
   }
 }
 
@@ -327,6 +440,15 @@ input[type="text"] {
   }
 }
 
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled) .posted, #videos .podcast:not(.disabled) .posted {
+    font-size: 40px;
+    padding: 10px;
+    right: 20px;
+    top: 20px;
+  }
+}
+
 #videos .video:not(.disabled) .posted.live, #videos .podcast:not(.disabled) .posted.live {
   font-size: 24px;
 }
@@ -334,6 +456,12 @@ input[type="text"] {
 @media only screen and (max-width: 1366px) {
   #videos .video:not(.disabled) .posted.live, #videos .podcast:not(.disabled) .posted.live {
     font-size: 16px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #videos .video:not(.disabled) .posted.live, #videos .podcast:not(.disabled) .posted.live {
+    font-size: 48px;
   }
 }
 
@@ -403,12 +531,36 @@ input[type="text"] {
   flex-wrap: wrap;
 }
 
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls, #audio-container .mejs__controls {
+    height: 100px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls, #audio-container .mejs__controls {
+    height: 260px;
+  }
+}
+
 #video-container .mejs__controls .transport, #audio-container .mejs__controls .transport {
   display: none;
   height: 70px;
   width: 100%;
   display: flex;
   margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls .transport, #audio-container .mejs__controls .transport {
+    height: 50px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls .transport, #audio-container .mejs__controls .transport {
+    height: 140px;
+  }
 }
 
 #video-container .mejs__controls .transport > span, #audio-container .mejs__controls .transport > span {
@@ -421,6 +573,23 @@ input[type="text"] {
   padding-top: 10px;
   margin-right: 10px;
   flex: 0 0 auto;
+}
+
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls .transport > span, #audio-container .mejs__controls .transport > span {
+    height: 50px;
+    width: 50px;
+    font-size: 32px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls .transport > span, #audio-container .mejs__controls .transport > span {
+    height: 140px;
+    width: 140px;
+    font-size: 100px;
+    padding-top: 20px;
+  }
 }
 
 #video-container .mejs__controls .transport > span.fa, #audio-container .mejs__controls .transport > span.fa {
@@ -439,6 +608,22 @@ input[type="text"] {
   margin-right: 0;
   min-width: 1px;
   flex: 1 0 auto;
+}
+
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls .transport > span.title, #audio-container .mejs__controls .transport > span.title {
+    height: 50px;
+    font-size: 24px;
+    padding: 12px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls .transport > span.title, #audio-container .mejs__controls .transport > span.title {
+    height: 140px;
+    font-size: 64px;
+    padding: 30px;
+  }
 }
 
 #video-container .mejs__controls .transport > span.title > span, #audio-container .mejs__controls .transport > span.title > span {
@@ -461,6 +646,18 @@ input[type="text"] {
 #video-container .mejs__controls .mejs__time-rail .mejs__time-total, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total {
   margin: 0;
   height: 40px;
+}
+
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls .mejs__time-rail .mejs__time-total, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total {
+    height: 30px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls .mejs__time-rail .mejs__time-total, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total {
+    height: 80px;
+  }
 }
 
 #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-loaded, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-current, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-hovered, #video-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-buffering, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-loaded, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-current, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-hovered, #audio-container .mejs__controls .mejs__time-rail .mejs__time-total .mejs__time-buffering {
@@ -502,6 +699,22 @@ input[type="text"] {
   line-height: 40px;
   font-size: 24px;
   font-weight: 400;
+}
+
+@media only screen and (max-width: 1366px) {
+  #video-container .mejs__controls .mejs__time, #audio-container .mejs__controls .mejs__time {
+    line-height: 30px;
+    height: 30px;
+    font-size: 20px;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  #video-container .mejs__controls .mejs__time, #audio-container .mejs__controls .mejs__time {
+    line-height: 80px;
+    height: 80px;
+    font-size: 48px;
+  }
 }
 
 #video-container .mejs__container, #audio-container .mejs__container {
@@ -602,26 +815,6 @@ a.btn.active {
   height: 76px;
 }
 
-#audio-title {
-  padding: 0 25px;
-  font-size: 24px;
-}
-
-@media only screen and (max-width: 1366px) {
-  #audio-title {
-    font-size: 20px;
-    padding: 0 25px;
-  }
-}
-
-#audio-title:before {
-  content: "Currently Playing: ";
-}
-
-#audio-title:after {
-  content: " (press back to stop)";
-}
-
 img.logo {
   position: absolute;
   top: 7px;
@@ -631,6 +824,13 @@ img.logo {
 @media only screen and (max-width: 1366px) {
   img.logo {
     display: none;
+  }
+}
+
+@media only screen and (min-width: 3800px) {
+  img.logo {
+    width: 160px;
+    height: 160px;
   }
 }
 

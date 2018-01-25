@@ -121,5 +121,4 @@ function getVideosForSearch(callback) {
     if (callback)
       callback();
   });
-
 }

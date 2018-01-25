@@ -1,3 +1,4 @@
+var savePodcastTimeKey = "smartBombSavePodcastTime";
 var GbCache = {
 
   regTokenKey : "smartBombRegToken",
@@ -36,6 +37,33 @@ var GbCache = {
 
   saveSearchHistory : function(searchHistory) {
     localStorage.setItem(GbCache.searchHistoryKey, JSON.stringify(searchHistory));
+  },
+
+  savePodcastTimeKey : savePodcastTimeKey,
+
+  podcastTimes : (function(){
+    var times = localStorage.getItem(savePodcastTimeKey);
+    if (times === null) {
+      localStorage.setItem(savePodcastTimeKey, JSON.stringify({}));
+    }
+    return JSON.parse(localStorage.getItem(savePodcastTimeKey));
+  })(),
+
+  savePodcastTime : function(podcastId, timeToSave) {
+    GbCache.podcastTimes[podcastId] = timeToSave;
+    localStorage.setItem(GbCache.savePodcastTimeKey, JSON.stringify(GbCache.podcastTimes));
+  },
+
+  getPodcastTime : function(podcastId) {
+    if (GbCache.podcastTimes[podcastId])
+      return GbCache.podcastTimes[podcastId];
+    else
+      return 0;
+  },
+
+  clearCache : function() {
+    localStorage.removeItem(GbCache.regTokenKey);
+    localStorage.removeItem(GbCache.categoryKey);
   }
 
 }

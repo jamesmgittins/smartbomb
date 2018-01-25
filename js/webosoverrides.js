@@ -27,7 +27,25 @@ if (Constants.webOsMode) {
 		  $.getJSON(url + "&format=json", function(data){
 			  requestInProgress = false;
 		      callback(data);
-		  }).always(function(){
+      })
+      .fail(function(response){
+        console.log("request failed");
+        console.log(response);
+        if (response.status == 401 && response.responseJSON && response.responseJSON.status_code == 100) {
+          console.log("invalid api key");
+          
+          $("#top-menu").hide();
+          $("#shows").hide();
+          GbCache.clearCache();
+          if ($("#enter-code .error-msg").length == 0)
+            $("#enter-code").prepend("<p class='error-msg'>The giantbomb server thinks your saved API key is invalid</p>");
+          $("#app-code").val("");
+          $("#reg-status").text("");
+          $("#enter-code").show();
+          $("#enter-code input").focus();
+        }
+      })
+      .always(function(){
 			  $(".spinner").hide();
 			    requestInProgress = false;
 		  });

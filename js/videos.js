@@ -71,7 +71,7 @@ function checkShowCache(request, callback, offset) {
   var cacheValue = currentMenuOption == "shows" ? videoShowCache[currentShow] : videoCategoryCache[currentCategory];
   var moreVideosToLoad = cacheValue && cacheValue.videos.length < cacheValue.total;
 
-  if (cacheValue && (offset == 0 || !moreVideosToLoad)) {
+  if (cacheValue && (offset == 0 || !moreVideosToLoad) && Date.now() - cacheValue.time < Constants.cacheTime) {
     videos = cacheValue.videos;
     callback();
   }
@@ -129,6 +129,8 @@ function getVideoCategories(callback) {
       GbEndpoints.videoCategories(function (data) {
         if (!arrayEquals(videoCategories, extraVideoCategories.concat(data.results))) {
           videoCategories = extraVideoCategories.concat(data.results);
+          if (!premiumUser)
+            videoCategories.splice(1,1);
           GbCache.saveCategories(videoCategories);
           if (currentMenuOption == "videos")
             renderShows();
@@ -138,6 +140,8 @@ function getVideoCategories(callback) {
   } else {
     GbEndpoints.videoCategories(function (data) {
       videoCategories = extraVideoCategories.concat(data.results);
+      if (!premiumUser)
+        videoCategories.splice(1,1);
       GbCache.saveCategories(videoCategories);
       callback();
     });
@@ -159,6 +163,8 @@ var liveTimeout;
 
 function getLiveStream(callback) {
   clearTimeout(liveTimeout);
+  if (!premiumUser)
+    return;
 
   // added for testing live stream function
   if (Constants.testLiveStream) {
@@ -184,6 +190,9 @@ function getLiveStream(callback) {
     }, function(data){
       liveVideo = undefined;
         $("#live-menu-option").hide();
+      if (data.errMessage && data.errMessage.indexOf("premium") != -1) {
+        premiumUser = false;
+      }
       if (callback)
         callback();
     });
@@ -208,9 +217,13 @@ function getVideos() {
 
 function updateVideoTime() {
 
-  if (currentlyPlayingVideo.id != "live" && jsVideo.currentTime) {
+  if (premiumUser && currentlyPlayingVideo.id != "live" && jsVideo.currentTime && jsVideo.currentTime > 10) {
     GbEndpoints.saveTime(currentlyPlayingVideo.id, Math.round(jsVideo.currentTime), function(data){
-      // dont really need to do anything
+      if (data.success == 0 && data.message && data.message.indexOf("premium") != -1) {
+        console.log("clearing timer interval");
+        if (timerInterval)
+          clearInterval(timerInterval);
+      }
     });
   }
 }

@@ -3,6 +3,7 @@ $focus-color : #cf0652;
 $link-color : #69CDFF;
 $font-family : "MuseoSans",sans-serif;
 $breakpoint : 1366px;
+$breakpoint4k : 3800px;
 
 @mixin respond-to($media) {
   @if $media == 720p {
@@ -10,6 +11,9 @@ $breakpoint : 1366px;
   }
   @else if $media == 1080p {
     @media only screen and (min-width: $breakpoint + 1) {@content;}
+  }
+  @else if $media == 4k {
+    @media only screen and (min-width: $breakpoint4k) {@content;}
   }
 }
 
@@ -19,21 +23,24 @@ body {
   color: #DDD;
   font-size: 30px;
   height:1080px;
-  @include respond-to(720p) { font-size: 20px }
+  @include respond-to(720p) { font-size: 20px; }
+  @include respond-to(4k) { font-size: 60px; }
   margin:0;
   
 }
 
 h1 {
   font-size: 50px;
-  @include respond-to(720p) { font-size: 30px;}
+  @include respond-to(720p) { font-size: 30px; }
+  @include respond-to(4k) { font-size: 100px; }
 }
 
 .play-buttons {
   width:100%;
   text-align: center;
   margin-top: 30px;
-  @include respond-to(720p) { margin-top: 20px;}
+  @include respond-to(720p) { margin-top: 20px; }
+  @include respond-to(4k) { margin-top: 60px; }
 
   * {
     -webkit-animation: fadeinfull ease-in 1;
@@ -48,6 +55,7 @@ a.btn.play {
   padding: 10px 30px;
   margin: 5px;  
   @include respond-to(720p) { font-size: 30px; padding: 8px 20px;}
+  @include respond-to(4k) { font-size: 100px; padding: 20px 60px;}
 }
 
 a, a:visited, a:hover {
@@ -61,6 +69,7 @@ a, a:visited, a:hover {
 input[type="text"] {
     font-size:40px;
     border-bottom: 10px solid transparent;
+    @include respond-to(4k) { font-size: 80px;}
 }
 
 .dialog {
@@ -77,11 +86,13 @@ input[type="text"] {
   text-align: center;
   font-size: 64px;
   @include respond-to(720p) { font-size: 40px; }
+  @include respond-to(4k) { font-size: 120px; }
   background-color: rgb(43, 46, 49);
 
   .menu-option {
-    padding: 10px 20px 10px 20px;
-    @include respond-to(720p) { padding: 8px 16px 8px 16px; }
+    padding: 10px 20px;
+    @include respond-to(720p) { padding: 8px 16px; }
+    @include respond-to(4k) { padding: 20px 40px; }
     display: inline-block;
     cursor: pointer;
     width: 15%;
@@ -114,6 +125,7 @@ input[type="text"] {
   height:300px;
   padding: 30px 100px 20px 100px;
   @include respond-to(720p) { height:200px; padding: 20px 60px 10px 60px;}
+  @include respond-to(4k) { height:600px; padding: 60px 200px 40px 200px;}
   text-align: center;
   background-size: cover;
   
@@ -127,6 +139,7 @@ input[type="text"] {
   h1, p {
     margin: 15px;
     @include respond-to(720p) { margin: 10px;}
+    @include respond-to(4k) { margin: 30px;}
   }
 
   small {
@@ -137,6 +150,7 @@ input[type="text"] {
 .nav-bar {
   height: 70px;
   @include respond-to(720p) { height: 40px;}
+  @include respond-to(4k) { height: 140px;}
   position: relative;
   background-color: #262626;
   overflow: visible;
@@ -144,12 +158,13 @@ input[type="text"] {
   div.podcast,
   div.show {
     float: left;
-    padding: 10px 20px 10px 20px;
+    padding: 10px 20px;
     cursor: pointer;
     text-align: center;
     font-size: 32px;
     display: inline;
-    @include respond-to(720p) { font-size: 24px; padding: 6px 15px 6px 15px;}
+    @include respond-to(720p) { font-size: 24px; padding: 6px 15px;}
+    @include respond-to(4k) { font-size: 64px; padding: 20px 40px;}
 
     &.width-set {
       display: block;
@@ -159,6 +174,7 @@ input[type="text"] {
       text-decoration: none;
       line-height: 50px;
       @include respond-to(720p) { line-height:28px;}
+      @include respond-to(4k) { line-height:100px;}
     }
 
     a:before {
@@ -189,6 +205,7 @@ input[type="text"] {
     width: 450px;
     height: 253px;
     @include respond-to(720p) { width : 300px; height : 168px;}
+    @include respond-to(4k) { width : 900px; height : 506px;}
     background-color: #222;
     text-align: center;
     background-size: contain;
@@ -203,6 +220,7 @@ input[type="text"] {
       top:-15px;
       left:0;
       background-color: $focus-color;
+      @include respond-to(4k) {height: 30px; top: -30px;}
     }
     &.active:after {
       content:"";
@@ -212,6 +230,7 @@ input[type="text"] {
       bottom:-15px;
       left: 0;
       background-color: $focus-color;
+      @include respond-to(4k) {height: 30px; bottom: -30px;}
     }
 
     a {
@@ -227,6 +246,7 @@ input[type="text"] {
       -webkit-transform: translate(-50%,-50%);
       transform:translate(-50%,-50%);
       @include respond-to(720p) { line-height: 30px; }
+      @include respond-to(4k) { line-height: 100px; }
     }
 
     .video-time {
@@ -236,6 +256,7 @@ input[type="text"] {
       font-size: 20px;
       padding:5px;
       @include respond-to(720p) { font-size: 16px; padding: 4px; left:6px; bottom:14px;}
+      @include respond-to(4k) { font-size: 40px; padding: 10px; left:20px; bottom:40px;}
       background-color: rgba(0, 0, 0, 0.7);
     }
 
@@ -246,12 +267,14 @@ input[type="text"] {
       font-size: 20px;
       padding:5px;
       @include respond-to(720p) { font-size: 16px; padding: 4px; right:6px; top:6px;}
+      @include respond-to(4k) { font-size: 40px; padding: 10px; right:20px; top:20px;}
       background-color: rgba(0, 0, 0, 0.7);
     }
 
     .posted.live {
       font-size: 24px;
       @include respond-to(720p) { font-size: 16px;}
+      @include respond-to(4k) { font-size: 48px;}
     }
 
     .video-timer {
@@ -316,12 +339,18 @@ input[type="text"] {
     height:130px;
     flex-wrap: wrap;
 
+    @include respond-to(720p) {height:100px;}
+    @include respond-to(4k) {height:260px;}
+
     .transport {
       display: none;
       height:70px;
       width: 100%;
       display: flex;
       margin-bottom: 10px;
+
+      @include respond-to(720p) {height:50px;}
+      @include respond-to(4k) {height:140px;}
 
       > span {
         width:70px;
@@ -333,6 +362,8 @@ input[type="text"] {
         padding-top: 10px;
         margin-right: 10px;
         flex: 0 0 auto;
+        @include respond-to(720p) {height:50px;width:50px;font-size: 32px;}
+        @include respond-to(4k) {height:140px;width:140px;font-size: 100px;padding-top: 20px;}
 
         &.fa {
           cursor: pointer;
@@ -351,6 +382,8 @@ input[type="text"] {
           margin-right: 0;
           min-width: 1px;
           flex:1 0 auto;
+          @include respond-to(720p) {height:50px; font-size: 24px;padding: 12px;}
+          @include respond-to(4k) {height:140px; font-size: 64px;padding: 30px;}
 
           > span {
             overflow: hidden;
@@ -374,6 +407,8 @@ input[type="text"] {
       .mejs__time-total {
         margin:0;
         height:40px;
+        @include respond-to(720p) {height:30px;}
+        @include respond-to(4k) {height:80px;}
 
         .mejs__time-loaded, .mejs__time-current, .mejs__time-hovered, .mejs__time-buffering {
           height:100%;
@@ -417,6 +452,8 @@ input[type="text"] {
       line-height: 40px;
       font-size: 24px;
       font-weight: 400;
+      @include respond-to(720p) {line-height: 30px; height:30px; font-size: 20px;}
+      @include respond-to(4k) {line-height: 80px; height:80px; font-size: 48px;}
     }
   }
 
@@ -516,23 +553,12 @@ a.btn.active {
   height:76px;
 }
 
-#audio-title {
-  padding: 0 25px;
-  font-size: 24px;
-  @include respond-to(720p) { font-size: 20px; padding: 0 25px;}
-}
-#audio-title:before {
-  content:"Currently Playing: ";
-}
-#audio-title:after {
-  content:" (press back to stop)";
-}
-
 img.logo {
   position: absolute;
   top:7px;
   left:10px;
   @include respond-to(720p) { display: none;}
+  @include respond-to(4k) { width: 160px; height: 160px;}
 }
 
 #live-menu-option {

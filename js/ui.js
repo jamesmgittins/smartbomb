@@ -22,7 +22,7 @@ var currentUILevel = 0;
 var cursorVisible = false;
 
 function setKeyHandler() {
-  document.body.onkeydown = function (e) {
+  document.onkeydown = function (e) {
     for (var i = 0; i < keyCodes.length; i++) {
       if (e.keyCode == keyCodes[i].code) {
         // console.log(keyCodes[i].value);
@@ -99,9 +99,11 @@ function setKeyHandler() {
 function playPause() {
   if ($("#video-container").is(":visible")) {
     jsVideo.paused ? jsVideo.play() : jsVideo.pause();
+    jsVideo.paused ? $(".transport span.fa-play").removeClass("fa-pause") : $(".transport span.fa-play").addClass("fa-pause");
   }
   if ($("#audio-container").is(":visible")) {
     jsAudio.paused ? jsAudio.play() : jsAudio.pause();
+    jsAudio.paused ? $(".transport span.fa-play").removeClass("fa-pause") : $(".transport span.fa-play").addClass("fa-pause");
   }
   showControls();
 }
@@ -176,7 +178,7 @@ function up() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    
+    showControls();
   } else {
     if (currentUILevel > 0)
       currentUILevel--;
@@ -190,7 +192,7 @@ function down() {
   if ($("#search-form").is(":visible"))
     return;
   if ($("#video-container").is(":visible")) {
-    
+    showControls();
   } else {
     if (currentUILevel < 3 || (currentUILevel < 4 && $("#audio-container").is(":visible")))
       currentUILevel++;

@@ -1,19 +1,18 @@
 var Constants = {
   webOsMode: true,
-  corsProxy: "https://cors.io/",
+  corsProxy: "https://cors.jamesgittins.com/",
   appName: "smartbomb",
-  cacheTime: 120000,
+  cacheTime: 300000,
   liveVideoCheckTime: 60000,
   videosLimit: "&limit=30",
   videosPerRequest: 30,
   itemsInCarousel: 11,
-  minCarouselTime: 80,
   testLiveStream: false,
-  freeApi:"32874h0esfnioand9032",
-  debugKey:"asiodun92309joad",
+  debugKey:"D3BUG!",
   uiNavigationDelay : 1000
 };
 
+var premiumUser = true;
 var currentMenuOption = "videos";
 
 var extraVideoCategories = [
@@ -217,6 +216,8 @@ function selectVideo(id, owlIndexGoTo) {
 }
 
 function updateHiddenVideos() {
+  if (!currentlyPlayingVideo)
+    return;
   var half = Math.round((Constants.itemsInCarousel - 1) / 2);
   for (var i = -half; i < half; i++) {
     var owlIndexToUse = currentlyPlayingVideo.owlIndex + i;
@@ -242,11 +243,11 @@ function nextVideo() {
     return;
   
   if (currentMenuOption == "podcasts") {
-    if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex + 1]) {
+    if (podcastCache[currentPodcast][currentPodcastEpisode.arrayIndex + 1]) {
       readyToMove = false;
-      selectPodcastEpisode(podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex + 1].id, currentlyPlayingPodcast.owlIndex + 1 > Constants.itemsInCarousel - 1 ? 0 : currentlyPlayingPodcast.owlIndex + 1);
+      selectPodcastEpisode(podcastCache[currentPodcast][currentPodcastEpisode.arrayIndex + 1].id, currentPodcastEpisode.owlIndex + 1 > Constants.itemsInCarousel - 1 ? 0 : currentPodcastEpisode.owlIndex + 1);
       $("#videos .podcast").removeClass("active");
-      $("." + currentlyPlayingPodcast.cssId).addClass("active");
+      $("." + currentPodcastEpisode.cssId).addClass("active");
     }
   } else {
     if (videos[currentlyPlayingVideo.arrayIndex + 1]) {
@@ -263,11 +264,11 @@ function previousVideo() {
     return;
   
   if (currentMenuOption == "podcasts") {
-    if (podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex - 1]) {
+    if (podcastCache[currentPodcast][currentPodcastEpisode.arrayIndex - 1]) {
       readyToMove = false;
-      selectPodcastEpisode(podcastCache[currentPodcast][currentlyPlayingPodcast.arrayIndex - 1].id, currentlyPlayingPodcast.owlIndex - 1 < 0 ? Constants.itemsInCarousel - 1 : currentlyPlayingPodcast.owlIndex - 1);
+      selectPodcastEpisode(podcastCache[currentPodcast][currentPodcastEpisode.arrayIndex - 1].id, currentPodcastEpisode.owlIndex - 1 < 0 ? Constants.itemsInCarousel - 1 : currentPodcastEpisode.owlIndex - 1);
       $("#videos .podcast").removeClass("active");
-      $("." + currentlyPlayingPodcast.cssId).addClass("active");
+      $("." + currentPodcastEpisode.cssId).addClass("active");
     }
   } else {
     if (videos[currentlyPlayingVideo.arrayIndex - 1]) {
@@ -329,7 +330,7 @@ function playVideo(quality) {
   if ($("#video-container").is(":visible"))
     return false;
 
-  $("#video-container").html('<video id="video-player" controls autoplay preload="metadata" poster="standby.jpg"></video>');
+  $("#video-container").html('<video id="video-player" autoplay preload="metadata" poster="standby.jpg"></video>');
 
   stopPodcast();
 
@@ -364,7 +365,8 @@ function playVideo(quality) {
 }
 
 function closeVideo() {
-  clearInterval(timerInterval);
+  if (timerInterval)
+    clearInterval(timerInterval);
 
   jsVideo.pause();
   if (currentlyPlayingVideo && !currentlyPlayingVideo.live) {
@@ -389,11 +391,19 @@ function registerApp() {
   $(".spinner").show();
   var linkCode = $("#app-code").val();
   if (linkCode == Constants.debugKey) {
-    regToken = Constants.freeApi;
-    GbCache.saveRegToken(regToken);
-    $("#reg-status").text("Success!");
-    $("#enter-code").fadeOut();
-    startApplication();
+    $.getJSON(Constants.corsProxy + 'http://jamesgittins.com/js/gb-api.json', function (result) {
+    if (result.key) {
+      regToken = result.key;
+      GbCache.saveRegToken(regToken);
+      $("#reg-status").text("Success!");
+      $("#enter-code").fadeOut();
+      startApplication();
+    } else {
+      $("#reg-status").text("Uh oh! Something went wrong, maybe the code has expired? Please try again.");
+    }
+  }).always(function () {
+    $(".spinner").hide();
+  });
   } else
   $.getJSON(Constants.corsProxy + 'https://www.giantbomb.com/app/' + Constants.appName + '/get-result?format=json&regCode=' + linkCode, function (result) {
     if (result.status == "success") {

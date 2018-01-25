@@ -1,7 +1,8 @@
 var GbEndpoints = {
 
   constants: {
-    videoFields: "&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time,deck,user,youtube_id",
+    // videoFields: "&field_list=hd_url,high_url,low_url,url,id,image,length_seconds,name,publish_date,saved_time,deck,user,youtube_id"
+    videoFields : ""
   },
 
   urls: {
@@ -44,8 +45,6 @@ var GbEndpoints = {
     corsRequest(GbEndpoints.urls.search + "?api_key=" + regToken + "&resources=video&query=" + searchString + "&page=" + page + GbEndpoints.constants.videoFields, function (data) {
       if (data.error == "OK") {
         callback(data);
-      } else {
-        // handle error
       }
     });
   },
