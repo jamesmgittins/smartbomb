@@ -72,11 +72,11 @@ function setKeyHandler() {
             break;
 
           case "rewind":
-            rewind();
+            seekVideo(-10);
             break;
 
           case "fast_forward":
-            fastForward();
+            seekVideo(10);
             break;
         }
       }
@@ -118,22 +118,12 @@ function playPause() {
   showControls();
 }
 
-function rewind() {
+function seekVideo(seekStep) {
   if ($("#video-container").is(":visible")) {
-    jsVideo.setCurrentTime(jsVideo.getCurrentTime() - 10);
+    jsVideo.setCurrentTime(jsVideo.getCurrentTime() + seekStep);
   }
   if ($("#audio-container").is(":visible")) {
-    jsAudio.setCurrentTime(jsAudio.getCurrentTime() - 10);
-  }
-  showControls();
-}
-
-function fastForward() {
-  if ($("#video-container").is(":visible")) {
-    jsVideo.setCurrentTime(jsVideo.getCurrentTime() + 10);
-  }
-  if ($("#audio-container").is(":visible")) {
-    jsAudio.setCurrentTime(jsAudio.getCurrentTime() + 10);
+    jsAudio.setCurrentTime(jsAudio.getCurrentTime() + seekStep);
   }
   showControls();
 }
