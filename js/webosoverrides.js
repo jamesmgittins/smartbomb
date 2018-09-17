@@ -2,7 +2,7 @@
  * 
  */
 if (Constants.webOsMode) {
-	// no cors needed when working as an app
+  // no cors needed when working as an app
   Constants.corsProxy = "";
   
   keyCodes = [
@@ -13,20 +13,22 @@ if (Constants.webOsMode) {
     { code: "13", value: "select" },
     { code: "461", value: "back" },
     { code: "415", value: "play" },
-    { code: "19", value: "pause" }
+    { code: "19", value: "pause" },
+    { code: "412", value: "rewind" },
+    { code: "417", value: "fast_forward" }
   ];
-	
-	corsRequest = function(url, callback, hideSpinner) {
-		  if (requestInProgress)
-		    return false;
+  
+  corsRequest = function(url, callback, hideSpinner) {
+      if (requestInProgress)
+        return false;
 
-		  requestInProgress = true;
-		  if (!hideSpinner)
-		    $(".spinner").show();
-		  
-		  $.getJSON(url + "&format=json", function(data){
-			  requestInProgress = false;
-		      callback(data);
+      requestInProgress = true;
+      if (!hideSpinner)
+        $(".spinner").show();
+      
+      $.getJSON(url + "&format=json", function(data){
+        requestInProgress = false;
+          callback(data);
       })
       .fail(function(response){
         console.log("request failed");
@@ -46,10 +48,10 @@ if (Constants.webOsMode) {
         }
       })
       .always(function(){
-			  $(".spinner").hide();
-			    requestInProgress = false;
-		  });
-		}
+        $(".spinner").hide();
+          requestInProgress = false;
+      });
+    }
 }
 
 

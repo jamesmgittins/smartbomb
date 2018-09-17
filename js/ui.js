@@ -7,7 +7,9 @@ var keyCodes = [
   { code: "27", value: "back" },
   { code: "461", value: "back" },
   { code: "415", value: "play" },
-  { code: "19", value: "pause" }
+  { code: "19", value: "pause" },
+  { code: "412", value: "rewind" },
+  { code: "417", value: "fast_forward" }
 ];
 
 var uiLevels = {
@@ -68,6 +70,14 @@ function setKeyHandler() {
           case "pause":
             playPause();
             break;
+
+          case "rewind":
+            seekVideo(-10);
+            break;
+
+          case "fast_forward":
+            seekVideo(10);
+            break;
         }
       }
     }
@@ -104,6 +114,16 @@ function playPause() {
   if ($("#audio-container").is(":visible")) {
     jsAudio.paused ? jsAudio.play() : jsAudio.pause();
     jsAudio.paused ? $(".transport span.fa-play").removeClass("fa-pause") : $(".transport span.fa-play").addClass("fa-pause");
+  }
+  showControls();
+}
+
+function seekVideo(seekStep) {
+  if ($("#video-container").is(":visible")) {
+    jsVideo.setCurrentTime(jsVideo.getCurrentTime() + seekStep);
+  }
+  if ($("#audio-container").is(":visible")) {
+    jsAudio.setCurrentTime(jsAudio.getCurrentTime() + seekStep);
   }
   showControls();
 }
