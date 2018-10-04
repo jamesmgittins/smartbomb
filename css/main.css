@@ -214,6 +214,14 @@ input[type="text"] {
   }
 }
 
+#media-view p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #media-view small {
   margin: 0 50px;
 }
