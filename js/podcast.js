@@ -26,7 +26,7 @@ GbPodcast.prototype.getHtml = function(left) {
 
 GbPodcast.prototype.getMediaInformationHtml = function() {
   changeBackgroundImage(this.image);
-  return "<h1>" + this.title + "</h1><p>" + this.description + "</p>";
+  return "<h1>" + this.title + "</h1><p>" + $(this.description).text() + "</p>";
 }
 
 GbPodcast.prototype.getSrc = function() {

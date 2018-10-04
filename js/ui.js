@@ -333,6 +333,7 @@ var topMenuTimeout;
 function setTopMenuClicks() {
   $("#top-menu .menu-option").click(function () {
     if (!requestInProgress) {
+      $("#search-form").hide();
       var clicked = $(this).data("menu-option");
 
       if (clicked == currentMenuOption)

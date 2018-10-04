@@ -142,6 +142,14 @@ input[type="text"] {
     @include respond-to(4k) { margin: 30px;}
   }
 
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   small {
     margin: 0 50px;
   }
