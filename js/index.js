@@ -450,3 +450,20 @@ $(function () {
   mediaElementSetup();
   owlInit();
 });
+
+function openBrowser(url) {
+  var request = webOS.service.request("luna://com.webos.applicationManager", {
+    method: "launch",
+    parameters: {
+        "id": "com.webos.app.browser",
+        "params": {
+            "target": url,
+        }
+    },
+    onFailure: function (inError) {
+        console.log("Failed to launch the browser");
+        console.log("[" + inError.errorCode + "]: " + inError.errorText);
+        return;
+    }
+  });
+}
